@@ -40,6 +40,7 @@ public class Student : MonoBehaviour {
                 dist -= toNext;
             }
         }
+        setPositionInUnity();
     }
 
     public void setPositionAndRoute(Coordinates pos, List<Node> r)

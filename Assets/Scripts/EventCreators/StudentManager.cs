@@ -79,9 +79,7 @@ public class StudentManager : MonoBehaviour {
         {
             List<Node> path = routeManagerScript.getPath(s.prevNode, destination);
             s.setPositionAndRoute(s.prevNode.coordinates, path);
-            Debug.Log("Student ID: " + s.ID);
             Func<Event> delete = () => {
-                Debug.Log("Delete Student ID: " + s.ID);
                 return deleteStudent(s);
             };    //This event does not prompt another event
             //Triggered when student finishes the walk

@@ -32,12 +32,7 @@ public class GlobalEventManager : MonoBehaviour {
         routeMan.initialize();
         studentMan.initialize();
 
-        addEvent(studentMan.getAnotherGroup());
-        //1. Initialize the states. (Tables, Stall queues, etc.)
-
-        //2. Start the StudentCreatorService
-
-
+        //addEvent(studentMan.getAnotherGroup());
 	}
 	
 	void Update () {
