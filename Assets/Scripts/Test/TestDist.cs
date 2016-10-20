@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class TestDist : MonoBehaviour {
 
@@ -8,27 +9,48 @@ public class TestDist : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        IntervalGenerator g = new Normal(10, 5);
-        double sum = 0;
-        List<double> d = new List<double>();
-        while (counter < 10000)
+
+        List<LOL> lols = new List<LOL>();
+        lols.Add(new LOL(1));
+        lols.Add(new LOL(2));
+        lols.Add(new LOL(3));
+
+        List<Func<int>> fs = new List<Func<int>>();
+        foreach (LOL l in lols)
         {
-            counter++;
-            double another = g.next();
-            sum += another;
-            d.Add(another);
+            Func<int> func = () =>
+            {
+                Debug.Log(l.ID);   //prints 3,3,3 instead of 1,2,3
+                return 0;
+            };
+
+            /*** Change to the following and it works! for no apparent reason!
+            LOL another = l;
+            Func<int> func = () =>
+            {
+                Debug.Log(another.ID);
+                return 0;
+            };*/
+
+
+            fs.Add(func);
         }
-        double avg = sum / 10000;
-        double var = 0;
-        foreach(double x in d)
+        foreach (Func<int> f in fs)
         {
-            var += (avg - x) * (avg - x);
+            f();
         }
-        var /= 9999;
-        Debug.Log(avg + ", " + var);
     }
 	
 	// Update is called once per frame
 	void Update () {
+    }
+}
+
+class LOL
+{
+    public long ID;
+    public LOL(long id)
+    {
+        ID = id;
     }
 }

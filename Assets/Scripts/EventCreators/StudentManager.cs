@@ -63,7 +63,8 @@ public class StudentManager : MonoBehaviour {
         return null;
     }
 
-    //Return the very first event with us!
+    //Create a new StudentGroup, register its next event
+    //Register a next StudentGroup creationEvent
     public Event getAnotherGroup()
     {
         //add entry event
@@ -80,7 +81,6 @@ public class StudentManager : MonoBehaviour {
         {
             List<Node> path = routeManagerScript.getPath(s.prevNode, destination);
             s.setPositionAndRoute(s.prevNode.coordinates, path);
-            //Debug.Log("BEFORE:  s.ID = " + s.ID + " *******");
             Student another = s;
             Func<Event> delete = () => {
                 return deleteStudent(another);
