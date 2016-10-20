@@ -62,16 +62,22 @@
     <Compile Include="Assets\Scripts\DES\GlobalEventManager.cs" />
     <Compile Include="Assets\Scripts\DES\GlobalRegistry.cs" />
     <Compile Include="Assets\Scripts\DES\IntervalGenerator.cs" />
-    <Compile Include="Assets\Scripts\GlobalConstants.cs" />
-    <Compile Include="Assets\Scripts\EventCreators\RouteManager.cs" />
     <Compile Include="Assets\Scripts\EventCreators\Stall.cs" />
-    <Compile Include="Assets\Scripts\MapElement\MapObjectManager.cs" />
-    <Compile Include="Assets\Scripts\Student.cs" />
     <Compile Include="Assets\Scripts\EventCreators\StudentCreator.cs" />
-    <Compile Include="Assets\Scripts\StudentGroup.cs" />
+    <Compile Include="Assets\Scripts\EventCreators\StudentManager.cs" />
     <Compile Include="Assets\Scripts\EventCreators\Table.cs" />
+    <Compile Include="Assets\Scripts\GlobalConstants.cs" />
+    <Compile Include="Assets\Scripts\MapElement\MapObjectManager.cs" />
+    <Compile Include="Assets\Scripts\MapElement\RouteManager.cs" />
+    <Compile Include="Assets\Scripts\Student.cs" />
+    <Compile Include="Assets\Scripts\StudentGroup.cs" />
     <Compile Include="Assets\Scripts\Test\TestDist.cs" />
+    <Compile Include="Assets\Scripts\Utility.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Assets\Scripts\MapElement\layout_cornerGrid.txt" />
+    <None Include="Assets\Scripts\MapElement\layout_mainloop.txt" />
+    <None Include="Assets\Scripts\MapElement\layout_withTable.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

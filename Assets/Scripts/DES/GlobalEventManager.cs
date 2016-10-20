@@ -47,13 +47,16 @@ public class GlobalEventManager : MonoBehaviour {
     {
         if (e == null)
             return;
-        for(int i = 0; i < events.Count; ++i)
+        if (events.Count == 0)
+            events.Add(e);
+        for (int i = 0; i < events.Count; ++i)
         {
-            if(e.timeStamp > events.ElementAt(i).timeStamp)
+            if(e.timeStamp < events.ElementAt(i).timeStamp)
             {
-                events.Insert(i + 1, e);
+                events.Insert(i, e);
                 return;
             }
         }
+        events.Add(e);
     }
 }
