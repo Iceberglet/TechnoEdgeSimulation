@@ -32,7 +32,7 @@ public class GlobalEventManager : MonoBehaviour {
         routeMan.initialize();
         studentMan.initialize();
 
-        //addEvent(studentMan.getAnotherGroup());
+        addEvent(studentMan.getAnotherGroup());
 	}
 	
 	void Update () {
@@ -46,9 +46,9 @@ public class GlobalEventManager : MonoBehaviour {
             //Execute the first event - which may add another event
             this.addEvent(events.First().execute());
         }
-
-        //TODO: Finish up by move the students that are en route?
-	}
+        //Finish up by move the students that are en route?
+        studentMan.advanceAllStudents(elapsedTime);
+    }
 
     public void addEvent(Event e)
     {
