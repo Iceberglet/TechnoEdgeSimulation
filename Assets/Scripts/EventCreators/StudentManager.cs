@@ -15,7 +15,7 @@ public class StudentManager : MonoBehaviour {
 
     public GameObject studentTemplate;
     public GameObject studentGroupTemplate;
-    private List<Student> students = new List<Student>();
+    private List<Student> students = new List<Student>();   //Needed for collective movement
     private IntervalGenerator g;
 
     //Add in terms of group, Delete in terms of individual
@@ -24,7 +24,7 @@ public class StudentManager : MonoBehaviour {
         GameObject groupObj = Instantiate(studentGroupTemplate);
         StudentGroup groupScript = groupObj.GetComponent<StudentGroup>();
         Node entry = routeManagerScript.map_entries[GlobalConstants.getEntry()];
-        int number = 3; // GlobalConstants.getStudentNumber();
+        int number = 4; // GlobalConstants.getStudentNumber();
         //1. Determine Group Type.
         StudentGroup.Type type = GlobalConstants.rand.NextDouble() < GlobalConstants.TABLE_TAKER_RATIO ? StudentGroup.Type.TableFirst : StudentGroup.Type.FoodFirst;
         groupScript.type = type;
@@ -51,6 +51,7 @@ public class StudentManager : MonoBehaviour {
 
     public Event deleteStudent(Student s)
     {
+        Debug.Log("****** s.ID = " + s.ID + " *******");
         if (s.group.students.Count <= 1)
             Destroy(s.group.gameObject);
         //Remove from group
@@ -79,9 +80,12 @@ public class StudentManager : MonoBehaviour {
         {
             List<Node> path = routeManagerScript.getPath(s.prevNode, destination);
             s.setPositionAndRoute(s.prevNode.coordinates, path);
+            //Debug.Log("BEFORE:  s.ID = " + s.ID + " *******");
+            Student another = s;
             Func<Event> delete = () => {
-                return deleteStudent(s);
-            };    //This event does not prompt another event
+                return deleteStudent(another);
+            };
+
             //Triggered when student finishes the walk
             //TODO: Add bool isRandomWalking to student
             float expectedExitTime = GlobalEventManager.currentTime + Math.Max(path.Count - 1, 0) / GlobalConstants.WALK_SPEED;
@@ -93,7 +97,7 @@ public class StudentManager : MonoBehaviour {
                  "Time: " + GlobalEventManager.currentTime + " Student Reached a point to leave ");
             globalEventManager.addEvent(walk);
         }
-        return null;
+        return e;
     }
 
     // Use this for initialization

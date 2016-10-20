@@ -44,7 +44,9 @@ public class GlobalEventManager : MonoBehaviour {
         {
             currentTime = events.First().timeStamp;
             //Execute the first event - which may add another event
-            this.addEvent(events.First().execute());
+            Event toExecute = events.First();
+            this.addEvent(toExecute.execute());
+            events.Remove(toExecute);
         }
         //Finish up by move the students that are en route?
         studentMan.advanceAllStudents(elapsedTime);
@@ -55,7 +57,10 @@ public class GlobalEventManager : MonoBehaviour {
         if (e == null)
             return;
         if (events.Count == 0)
+        {
             events.Add(e);
+            return;
+        }
         for (int i = 0; i < events.Count; ++i)
         {
             if(e.timeStamp < events.ElementAt(i).timeStamp)

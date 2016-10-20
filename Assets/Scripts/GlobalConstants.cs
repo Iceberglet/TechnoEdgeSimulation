@@ -14,7 +14,7 @@ public class GlobalConstants
     public static readonly float Z_BOTTOM_STATIC = 9f;
     public static readonly float Z_MOVING_OBJ = 5f;
 
-    public static readonly float WALK_SPEED = 0.7f;
+    public static readonly float WALK_SPEED = 4f; //0.7f;
     //Unit per second
 
 

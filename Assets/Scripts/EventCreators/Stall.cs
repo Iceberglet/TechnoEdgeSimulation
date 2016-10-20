@@ -44,7 +44,7 @@ public class Stall : MonoBehaviour {
     
 	// Use this for initialization
 	void Start () {
-	    
+        g = new Exp(3);
 	}
 	
 	// Update is called once per frame
