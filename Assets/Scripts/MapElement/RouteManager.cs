@@ -89,7 +89,7 @@ public class RouteManager : MonoBehaviour
                 {
                     GameObject g = Instantiate(stall);
                     Stall stallScript = g.GetComponent<Stall>();
-                    stallScript.ID = GlobalConstants.STALL_NAMES[i - 6];
+                    stallScript.ID = GlobalConstants.STALL_IDS[i - 6];
                     map_stalls[i - 6] = g;
                     //g.transform.parent = this.transform;
                     Vector3 v = new Vector3(i, j, GlobalConstants.Z_BOTTOM_NETWORK_2);
@@ -153,7 +153,7 @@ public class RouteManager : MonoBehaviour
     {
         //larger the z, lower the layer
         GameObject obj;
-        float z = GlobalConstants.Z_BOTTOM_NETWORK;
+        float z = GlobalConstants.Z_BOTTOM_NETWORK_1;
         switch (type)
         {
             case ElementType.HorizontalBar:

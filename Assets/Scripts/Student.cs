@@ -1,67 +1,64 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
 public class Student : MonoBehaviour {
-
-
     public enum Stage { GetTable, GetFood, GoToTable, EatFood, Leave };
     //****************************************************************
 
-    private StudentGroup group;
+    public StudentGroup group { get; private set; }
     private Stall stallOfChoice;
     private List<Stage> todo = new List<Stage>();
-    public readonly string ID;
+    public long ID;
+    private static long counter = 0;
 
-    public Student (string id)
+    //*** Position Related ***
+    public Coordinates currentPos { get; private set; }
+    public Node prevNode { get; private set; }
+    private List<Node> route;
+
+    public void advanceFor(float seconds)
     {
-        ID = id;
+        if (route == null || route.Count < 1)
+            return;
+        float dist = seconds * GlobalConstants.WALK_SPEED;
+        while(route.Count > 0 && dist > 0)
+        {
+            Coordinates next = route.First().coordinates;
+            float toNext = Coordinates.distGrid(next, currentPos);
+            if (dist < toNext){
+                currentPos = new Coordinates(
+                    currentPos.x + (next.x - currentPos.x) * dist / toNext,
+                    currentPos.y + (next.y - currentPos.y) * dist / toNext
+                );
+                dist = 0;
+            } else
+            {
+                currentPos = next;
+                route.RemoveAt(0);
+                dist -= toNext;
+            }
+        }
     }
 
-    /*
-    public void proceedToNextStage()
+    public void setPositionAndRoute(Coordinates pos, List<Node> r)
     {
-        Stage nextStage = todo[0];
-        switch (nextStage)
-        {
-            case Stage.GetFood:    //Go To a stall and get food. When finished, go to next stage
-                break;
-            case Stage.GetTable:   //Random Walk in canteen. Does not finish until tableManager removes you and proceed to GoToTable mode
-                break;
-            case Stage.GoToTable:  //Slowly walks to the table being assigned
-                break;
-            case Stage.EatFood:    
-                break;
-            case Stage.Leave:
-                break;
-        }
-        todo.RemoveAt(0);
-    }*/
-
-
-    
-	// Use this for initialization
-	void Start () {
-        //TODO: the type should be initialized at the student group level.
-
-	    //Assign a Stage
-        if (this.group.type == StudentGroup.Type.TableFirst)
-        {
-            this.todo.Add(Stage.GetTable);
-            this.todo.Add(Stage.GetFood);
-        } else
-        {
-            this.todo.Add(Stage.GetFood);
-            this.todo.Add(Stage.GetTable);
-        }
-        this.todo.Add(Stage.GoToTable);
-        this.todo.Add(Stage.EatFood);
-        this.todo.Add(Stage.Leave);
-
+        currentPos = pos;
+        route = r;
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    public void setPositionInUnity()
+    {
+        this.transform.position = new Vector3(currentPos.x, currentPos.y, GlobalConstants.Z_MOVING_OBJ);
+    }
+
+    public void initialize(Stall s, StudentGroup g, Node start)
+    {
+        ID = counter++;
+        stallOfChoice = s;
+        group = g;
+        prevNode = start;
+        currentPos = start.coordinates;
+    }
 }

@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
-public class StudentGroup
+public class StudentGroup : MonoBehaviour
 {
     //******************* System Wide Treaks *************************
     public static readonly double tableTakerRatio = GlobalConstants.TABLE_TAKER_RATIO;
 
     public readonly List<Student> students;
     public enum Type { TableFirst, FoodFirst };  //take a table first or go to stall first
-    public readonly Type type;
+    public Type type;
 
     //Initialize a new group of student
     public StudentGroup()

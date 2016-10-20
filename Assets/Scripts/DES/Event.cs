@@ -14,12 +14,12 @@ public class Event
         CanteenDeparture,
     }
 
-    public readonly double timeStamp;
+    public readonly float timeStamp;
     public readonly EventType type;
     public readonly string msg;
     public readonly Func<Event> execute;
 
-    public Event(double stamp, EventType type, Func<Event> f, string msg)
+    public Event(float stamp, EventType type, Func<Event> f, string msg)
     {
         this.timeStamp = stamp;
         this.type = type;

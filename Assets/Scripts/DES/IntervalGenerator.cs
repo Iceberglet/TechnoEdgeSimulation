@@ -12,30 +12,30 @@ using System.Security.Cryptography;
 
 public interface IntervalGenerator
 {
-    double next();
+    float next();
 }
 
 public class Normal : IntervalGenerator
 {
-    private double mean;
-    private double sd;
+    private float mean;
+    private float sd;
     private bool positive;
     private Random rand = new Random();
 
-    public Normal(double m, double sd, bool positive = true)
+    public Normal(float m, float sd, bool positive = true)
     {
         this.mean = m;
         this.sd = sd;
         this.positive = positive;
     }
 
-    public double next()
+    public float next()
     {
-        double u1 = rand.NextDouble(); //these are uniform(0,1) random doubles
-        double u2 = rand.NextDouble();
-        double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) *
-                     Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
-        double randNormal =
+        float u1 = (float)rand.NextDouble(); //these are uniform(0,1) random  floats
+        float u2 = (float)rand.NextDouble();
+        float randStdNormal = (float)(Math.Sqrt(-2.0 * Math.Log(u1)) *
+                     Math.Sin(2.0 * Math.PI * u2)); //random normal(0,1)
+        float randNormal =
                      mean + sd * randStdNormal; //random normal(mean,stdDev^2)
         return positive ? Math.Max(randNormal, 0) : randNormal;
     }
@@ -43,7 +43,7 @@ public class Normal : IntervalGenerator
 
 public class Exp : IntervalGenerator
 {
-    private double lambda;
+    private float lambda;
     private Random rand = new Random();
     //private RandomNumberGenerator rand = RandomNumberGenerator.Create();
 
@@ -52,48 +52,48 @@ public class Exp : IntervalGenerator
         this.lambda = l;
     }
 
-    public double next()
+    public float next()
     {
         if (lambda <= 0)
             throw new Exception("Invalid input for exp distribution: lambda = " + lambda);
-        double p = rand.NextDouble();
+        float p = (float)rand.NextDouble();
         /*
         var bytes = new Byte[8];
         rand.GetBytes(bytes);
-        // Step 2: bit-shift 11 and 53 based on double's mantissa bits
+        // Step 2: bit-shift 11 and 53 based on  float's mantissa bits
         var ul = BitConverter.ToUInt64(bytes, 0) / (1 << 11);
         Double p = ul / (Double)(1UL << 53);
         */
-        return Math.Log(1 - p) / (-lambda);
+        return (float)(Math.Log(1 - p) / (-lambda));
     }
 }
 
 public class Uniform : IntervalGenerator
 {
-    private double l;
-    private double r;
+    private float l;
+    private float r;
     private Random rand = new Random();
 
-    public Uniform(double l, double r)
+    public Uniform(float l, float r)
     {
         this.l = l;
         this.r = r;
     }
 
-    public double next()
+    public float next()
     {
         if (l > r)
             throw new Exception("Invalid input for uniform distribution, l > r");
-        return rand.NextDouble() * (r - l) + l;
+        return (float)rand.NextDouble() * (r - l) + l;
     }
 }
 
 public class StudentEntry : IntervalGenerator
 {
-    public double next()
+    public float next()
     {
         //TODO: Possibly get from a file
-        return 100;
+        return 2;
     }
 }
 

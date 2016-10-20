@@ -63,7 +63,6 @@
     <Compile Include="Assets\Scripts\DES\GlobalRegistry.cs" />
     <Compile Include="Assets\Scripts\DES\IntervalGenerator.cs" />
     <Compile Include="Assets\Scripts\EventCreators\Stall.cs" />
-    <Compile Include="Assets\Scripts\EventCreators\StudentCreator.cs" />
     <Compile Include="Assets\Scripts\EventCreators\StudentManager.cs" />
     <Compile Include="Assets\Scripts\EventCreators\Table.cs" />
     <Compile Include="Assets\Scripts\GlobalConstants.cs" />

@@ -23,7 +23,7 @@ public class StudentManager : MonoBehaviour {
     {
         GameObject groupObj = Instantiate(studentGroupTemplate);
         StudentGroup groupScript = groupObj.GetComponent<StudentGroup>();
-        Node entry = routeManagerScript.map_entries[GlobalConstants.getStudentEntry()];
+        Node entry = routeManagerScript.map_entries[GlobalConstants.getEntry()];
         int number = 3; // GlobalConstants.getStudentNumber();
         //1. Determine Group Type.
         StudentGroup.Type type = GlobalConstants.rand.NextDouble() < GlobalConstants.TABLE_TAKER_RATIO ? StudentGroup.Type.TableFirst : StudentGroup.Type.FoodFirst;
@@ -31,7 +31,7 @@ public class StudentManager : MonoBehaviour {
         for (int i = 0; i < number; i++)
         {
             //2. Determine Student Choice of Stall
-            int stall = GlobalConstants.getStudentStall();
+            int stall = GlobalConstants.getStallChoice();
             GameObject newStudent = Instantiate(studentTemplate);
             Student s = newStudent.GetComponent<Student>();
             students.Add(s);
@@ -46,7 +46,7 @@ public class StudentManager : MonoBehaviour {
     public void advanceAllStudents(float seconds)
     {
         foreach (Student s in students)
-            s.advanceTill(seconds);
+            s.advanceFor(seconds);
     }
 
     public Event deleteStudent(Student s)
@@ -86,8 +86,7 @@ public class StudentManager : MonoBehaviour {
             };    //This event does not prompt another event
             //Triggered when student finishes the walk
             //TODO: Add bool isRandomWalking to student
-            float expectedExitTime = GlobalEventManager.currentTime + Math.Max(path.Count - 1, 0) / GlobalConstants.STUDENT_SPEED;
-
+            float expectedExitTime = GlobalEventManager.currentTime + Math.Max(path.Count - 1, 0) / GlobalConstants.WALK_SPEED;
 
             //Debug.Log("Time: " + GlobalEventManager.currentTime + " No. of Students: " + group.students.Count + " exiting at: " + expectedExitTime);
             routeManagerScript.Highlight(path);
