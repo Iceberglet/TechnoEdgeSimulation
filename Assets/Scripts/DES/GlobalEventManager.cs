@@ -27,7 +27,7 @@ public class GlobalEventManager : MonoBehaviour {
 	void Start () {
         currentTime = 0;
         runningTime = 0;
-        speedFactor = 30;
+        speedFactor = 50;
         events = new List<Event>();
         routeMan = routeManager.GetComponent<RouteManager>();
         studentMan = studentManager.GetComponent<StudentManager>();

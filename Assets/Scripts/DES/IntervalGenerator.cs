@@ -86,7 +86,7 @@ public class StudentEntry : IntervalGenerator
     public float next()
     {
         //TODO: Possibly get from a file
-        return 2;
+        return 20;
     }
 }
 

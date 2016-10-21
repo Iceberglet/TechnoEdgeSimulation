@@ -32,20 +32,32 @@ public class Table : MonoBehaviour {
             if (this.students.Count < this.size)
                 this.students.Add(s);
             else
-                throw new System.Exception("Error: Trying to add student to a full table");
+            {
+                string errorMsg = "Error: Trying to add student to a full table\n";
+                errorMsg += "Students at table: ";
+                foreach(Student ss in students)
+                {
+                    errorMsg += " " + ss.ID;
+                }
+                errorMsg += "\nAttempted to add Student: " + s.ID;
+                throw new System.Exception(errorMsg);
+
+            }
         }
         s.table = this;
         if (students.Count == size)
-            return Status.Full;
-        else return Status.Half;
+            status = Status.Full;
+        else status = Status.Half;
+        return status;
     }
 
     public Status removeStudent(Student s)
     {
         students.Remove(s);
         if (students.Count == 0)
-            return Status.Empty;
-        else return Status.Half;
+            status = Status.Empty;
+        else status = Status.Half;
+        return status;
     }
 
     public int availability()

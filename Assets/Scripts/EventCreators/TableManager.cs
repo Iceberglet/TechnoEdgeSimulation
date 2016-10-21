@@ -47,7 +47,9 @@ public class TableManager : MonoBehaviour
             {
                 Student x1 = x;
                 x1.isRoaming = false;
+                //Debug.Log("**** Table Emptied, stop roaming: " + x1.ID);
                 eventManager.addEvent(boundStudentToTable(x1, t));
+                roamingStudents.Remove(x1);
             }
             return null;
         }
@@ -94,8 +96,9 @@ public class TableManager : MonoBehaviour
     {
         //TODO
         s.finishedHisBusiness = true;
-        if(s.group.students.All(student=>student.finishedHisBusiness))
-            foreach(Student x in s.group.students)
+        if (s.group.students.All(student => student.finishedHisBusiness))
+        {
+            foreach (Student x in s.group.students)
             {
                 Student ars = x;
                 ars.setPathTo(findClosestExit(ars.currentPos), routeManager);    //Get the closest exit
@@ -104,6 +107,9 @@ public class TableManager : MonoBehaviour
                 eventManager.addEvent(new Event(time, Event.EventType.CanteenDeparture, () => studentManager.deleteStudent(ars),
                     "Time: " + time + " Student ID: " + ars.ID + " has left"));
             }
+            if(t.status == Table.Status.Empty)
+                notifyTableEmptied(s.table);
+        }
         return null;
     }
 
@@ -129,6 +135,7 @@ public class TableManager : MonoBehaviour
             //Select one that has enough seats and 
             Table target = availableTables.Where(t => (t.availability() >= s.group.students.Count))
                 .OrderBy(t => Coordinates.distGrid(s.currentPos, t.node.coordinates)).First();
+            availableTables.Remove(target);
             foreach (Student studentInGroup in s.group.students)
             {
                 studentInGroup.table = target;
@@ -137,7 +144,7 @@ public class TableManager : MonoBehaviour
             }
             return boundStudentToTable(s, target);
         }
-        Debug.Log("No available table, start roaming.");
+        //Debug.Log("No available table, start roaming.");
         s.isRoaming = true;
         roamingStudents.Add(s);
         return startRoaming(s);

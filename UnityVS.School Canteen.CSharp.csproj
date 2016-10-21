@@ -78,5 +78,8 @@
     <None Include="Assets\Scripts\MapElement\layout_mainloop.txt" />
     <None Include="Assets\Scripts\MapElement\layout_withTable.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Scripts\MapElement\layout_withTable - Test.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
