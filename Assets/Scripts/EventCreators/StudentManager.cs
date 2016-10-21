@@ -53,16 +53,17 @@ public class StudentManager : MonoBehaviour {
 
     public Event deleteStudent(Student s)
     {
-        if (s && s.group && s.group.students.Count <= 1)
-            Destroy(s.group.gameObject);
-        else if(s != null)
+        if(s != null)
         {
+            GameObject group = s.group.gameObject;
             //Remove from group
             s.group.students.Remove(s);
             //Remove from list
             students.Remove(s);
             //Remove from map
             Destroy(s.gameObject);
+            if (s.group && s.group.students.Count <= 1)
+                Destroy(group);
         }
         return null;
     }
