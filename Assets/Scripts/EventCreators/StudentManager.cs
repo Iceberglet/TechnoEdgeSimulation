@@ -26,7 +26,7 @@ public class StudentManager : MonoBehaviour {
         GameObject groupObj = Instantiate(studentGroupTemplate);
         StudentGroup groupScript = groupObj.GetComponent<StudentGroup>();
         Node entry = routeManagerScript.map_entries[GlobalConstants.getEntry()];
-        int number = 4; // GlobalConstants.getStudentNumber();
+        int number = GlobalConstants.getStudentGroupSize();
         //1. Determine Group Type.
         StudentGroup.Type type = GlobalConstants.rand.NextDouble() < GlobalConstants.TABLE_TAKER_RATIO ? StudentGroup.Type.TableFirst : StudentGroup.Type.FoodFirst;
         groupScript.type = type;
@@ -120,7 +120,7 @@ public class StudentManager : MonoBehaviour {
                  "Time: " + GlobalEventManager.currentTime + " Student Reached a point to leave ");
             globalEventManager.addEvent(walk);
         }*/
-        return null;
+        return e;
     }
 
     // Use this for initialization

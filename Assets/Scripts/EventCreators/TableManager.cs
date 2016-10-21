@@ -110,8 +110,8 @@ public class TableManager : MonoBehaviour
     //Add in a student who is BEGINNING to search for a Table
     public Event addTableSearchingStudent(Student s)
     {
-        //This is a student coming back to a reserved table
-        if (s.hasFood && s.table != null)
+        //This is a student whose friends have already got him a table
+        if (s.table != null)
         {
             return boundStudentToTable(s, s.table);
         }
@@ -127,13 +127,15 @@ public class TableManager : MonoBehaviour
         if (availableTables.Count > 0)
         {
             //Select one that has enough seats and 
-            Table target = availableTables.Where(t => (t.availability() >= s.group.students.Count)).OrderBy(t => Coordinates.distGrid(s.currentPos, t.node.coordinates)).First();
-            foreach(Student studentInGroup in s.group.students)
+            Table target = availableTables.Where(t => (t.availability() >= s.group.students.Count))
+                .OrderBy(t => Coordinates.distGrid(s.currentPos, t.node.coordinates)).First();
+            foreach (Student studentInGroup in s.group.students)
             {
-                Student s2 = studentInGroup;
-                eventManager.addEvent(boundStudentToTable(s2, target));
+                studentInGroup.table = target;
+                //Student s2 = studentInGroup;
+                //eventManager.addEvent(boundStudentToTable(s2, target));
             }
-            return null;
+            return boundStudentToTable(s, target);
         }
         Debug.Log("No available table, start roaming.");
         s.isRoaming = true;

@@ -86,7 +86,7 @@ public class StudentEntry : IntervalGenerator
     public float next()
     {
         //TODO: Possibly get from a file
-        return 5;
+        return 2;
     }
 }
 
@@ -95,7 +95,7 @@ public class EatingTime : IntervalGenerator
     public float next()
     {
         //TODO: Possibly get from a file
-        return 20;
+        return 300;
     }
 }
 
