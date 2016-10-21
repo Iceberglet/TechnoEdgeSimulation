@@ -23,7 +23,10 @@ public class RouteManager : MonoBehaviour
     //******** Special Nodes **********
     public Node[] map_entries { get; private set; }
     public GameObject[] map_stalls { get; private set; }
+    public Dictionary<Node, List<Node>> pathToMainLoop;
+    public List<Node> mainLoopNodes = new List<Node>();
 
+    public List<Table> tables = new List<Table>();
 
     //******** Map Element **********
     //Use a graph of coordinates to represent the grid
@@ -39,6 +42,7 @@ public class RouteManager : MonoBehaviour
         //IMPORTANT TODO: Change the path to an executable one after publishing
         int[,] grid = readLayoutFromFile(Environment.CurrentDirectory + "\\Assets\\Scripts\\MapElement\\layout_cornerGrid.txt");
         int[,] table = readLayoutFromFile(Environment.CurrentDirectory + "\\Assets\\Scripts\\MapElement\\layout_withTable.txt");
+        int[,] mainLoop = readLayoutFromFile(Environment.CurrentDirectory + "\\Assets\\Scripts\\MapElement\\layout_mainloop.txt");
 
         for (int i = 0; i < tempMap.GetLength(0); ++i)
         {
@@ -65,61 +69,94 @@ public class RouteManager : MonoBehaviour
             {
                 Node cur = tempMap[i, j];
                 bool hasBottom = false, hasLeft = false;
+                bool bottomIsMain = false, leftIsMain = false;
                 if (cur == null)
                     continue;
-                
+
                 //Connect to neighbors
-                if (j < tempMap.GetLength(1) - 1 && tempMap[i, j + 1] != null)
-                    cur.addConnection(tempMap[i, j + 1]);
-                if (j > 0 && tempMap[i, j - 1] != null)
-                {
-                    hasBottom = true;
-                    cur.addConnection(tempMap[i, j - 1]);
-                }
                 if (i < tempMap.GetLength(0) - 1 && tempMap[i + 1, j] != null)
                     cur.addConnection(tempMap[i + 1, j]);
                 if (i > 0 && tempMap[i - 1, j] != null)
                 {
                     hasLeft = true;
+                    if (mainLoop[i - 1, j] >= 8 && mainLoop[i, j] >= 8)
+                        leftIsMain = true;
                     cur.addConnection(tempMap[i - 1, j]);
                 }
-
+                if (j < tempMap.GetLength(1) - 1 && tempMap[i, j + 1] != null)
+                    cur.addConnection(tempMap[i, j + 1]);
+                if (j > 0 && tempMap[i, j - 1] != null)
+                {
+                    hasBottom = true;
+                    if (mainLoop[i, j - 1] >= 8 && mainLoop[i, j] >= 8)
+                        bottomIsMain = true;
+                    cur.addConnection(tempMap[i, j - 1]);
+                }
                 //Special Nodes - Stalls
                 if (cur.nodeType == Node.NodeType.Stall)
                 {
                     GameObject g = Instantiate(stall);
                     Stall stallScript = g.GetComponent<Stall>();
-                    stallScript.ID = GlobalConstants.STALL_IDS[i - 6];
-                    map_stalls[i - 6] = g;
-                    //g.transform.parent = this.transform;
-                    Vector3 v = new Vector3(i, j, GlobalConstants.Z_BOTTOM_NETWORK_2);
+                    stallScript.initialize(i - 4, cur);
+                    map_stalls[i - 4] = g;
+                    //arrivalIntervalGenerator.transform.parent = this.transform;
+                    Vector3 v = new Vector3(i, j + 0.8f, GlobalConstants.Z_BOTTOM_STATIC);
                     g.transform.position = v;
                 }
                 //Tables
-                else if(table[i, j] == 2)
-                    addElement(ElementType.Table, i - 0.5f, j - 0.5f);
-                else if (table[i, j] == 3)
-                    addElement(ElementType.HalfTable, i - 0.5f, j - 0.5f);
+                else
+                {
+                    if (table[i, j] == 2)
+                    {
+                        List<Node> corners = new List<Node>();
+                        corners.Add(cur);
+                        corners.Add(tempMap[i, j - 1]);
+                        corners.Add(tempMap[i - 1, j - 1]);
+                        corners.Add(tempMap[i - 1, j]);
+                        Table t = addElement(ElementType.Table, i - 0.5f, j - 0.5f).GetComponent<Table>();
+                        t.initialize(2, corners, null);
+                        tables.Add(t);
+                    }
+                    else if (table[i, j] == 3)
+                    {
+                        List<Node> corners = new List<Node>();
+                        corners.Add(cur);
+                        corners.Add(tempMap[i, j - 1]);
+                        corners.Add(tempMap[i - 1, j - 1]);
+                        corners.Add(tempMap[i - 1, j]);
+                        Table t = addElement(ElementType.HalfTable, i - 0.5f, j - 0.5f).GetComponent<Table>();
+                        t.initialize(4, corners, null);
+                        tables.Add(t);
+                    }
+                }
+                //TODO: Add restricted tables
+
                 //Special Nodes - Entry Point
                 if (cur.nodeType == Node.NodeType.Entry)
                 {
                     switch (i)
                     {
                         case 0: map_entries[0] = cur; break;
-                        case 5: map_entries[1] = cur; break;
-                        case 23: if (j > 0) map_entries[2] = cur;
-                            else map_entries[3] = cur; break;
+                        case 3: map_entries[1] = cur; break;
+                        case 16: map_entries[2] = cur; break;
+                        case 23: map_entries[3] = cur; break;
                         default: throw new Exception("Invalid Entry Position? " + i + " " + j);
                     }
                 }
+                //Special Node: MainLoops
+                if(mainLoop[i, j] == 9)
+                {
+                    mainLoopNodes.Add(cur);
+                }
+                
                 //Graphic Add
                 if (hasLeft)
                 {
-                    addElement(ElementType.HorizontalBar, i - 0.5f, j);
+                    addElement(leftIsMain ? ElementType.MainHBar : ElementType.HorizontalBar, i - 0.5f, j);
                 }
                 if (hasBottom)
                 {
-                    addElement(ElementType.VerticalBar, i, j - 0.5f);
+                    addElement(bottomIsMain? ElementType.MainVBar : ElementType.VerticalBar, i, j - 0.5f);
                 }
             }
         }
@@ -146,7 +183,8 @@ public class RouteManager : MonoBehaviour
 
     public enum ElementType
     {
-        HorizontalBar, VerticalBar, Stall, Table, HalfTable
+        HorizontalBar, VerticalBar, Stall, Table, HalfTable,
+        MainHBar, MainVBar
     }
 
     private GameObject addElement(ElementType type, float x, float y)
@@ -162,11 +200,14 @@ public class RouteManager : MonoBehaviour
             case ElementType.VerticalBar:
                 obj = GameObject.Instantiate(verticalBar);
                 break;
-                /*
-            case ElementType.Stall:
-                z = GlobalConstants.Z_BOTTOM_STATIC;
-                obj = GameObject.Instantiate(stall);
-                break;*/
+            case ElementType.MainHBar:
+                z = GlobalConstants.Z_BOTTOM_NETWORK_2;
+                obj = GameObject.Instantiate(horizontalBarMain);
+                break;
+            case ElementType.MainVBar:
+                z = GlobalConstants.Z_BOTTOM_NETWORK_2;
+                obj = GameObject.Instantiate(verticalBarMain);
+                break;
             case ElementType.Table:
                 z = GlobalConstants.Z_BOTTOM_STATIC;
                 obj = GameObject.Instantiate(fullTable);

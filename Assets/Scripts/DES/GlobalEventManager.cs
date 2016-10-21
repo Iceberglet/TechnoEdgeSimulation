@@ -10,6 +10,8 @@ public class GlobalEventManager : MonoBehaviour {
     public GameObject studentManager;
     private RouteManager routeMan;
     private StudentManager studentMan;
+    public GameObject tableManager;
+    private TableManager tableMan;
 
     //Length of a typical run is 2 hours
     //If needs to be done within 20 seconds at fastest speed 
@@ -25,18 +27,21 @@ public class GlobalEventManager : MonoBehaviour {
 	void Start () {
         currentTime = 0;
         runningTime = 0;
-        speedFactor = 1;
+        speedFactor = 5;
         events = new List<Event>();
         routeMan = routeManager.GetComponent<RouteManager>();
         studentMan = studentManager.GetComponent<StudentManager>();
+        tableMan = tableManager.GetComponent<TableManager>();
         routeMan.initialize();
-        studentMan.initialize();
+        studentMan.initialize(tableMan);
+        tableMan.initialize(routeMan, this, studentMan);
 
         addEvent(studentMan.getAnotherGroup());
 	}
 	
 	void Update () {
-        float elapsedTime = speedFactor * Time.deltaTime;
+        int speedForThisFrame = speedFactor;
+        float elapsedTime = speedForThisFrame * Time.deltaTime;
         runningTime += elapsedTime;
 
         //Execute Events in Order
@@ -45,11 +50,13 @@ public class GlobalEventManager : MonoBehaviour {
             currentTime = events.First().timeStamp;
             //Execute the first event - which may add another event
             Event toExecute = events.First();
+            Debug.Log("Event " + toExecute.ID + " " + toExecute.msg);
             this.addEvent(toExecute.execute());
             events.Remove(toExecute);
         }
         //Finish up by move the students that are en route?
-        studentMan.advanceAllStudents(elapsedTime);
+        if(speedForThisFrame < 100)
+            studentMan.advanceAllStudents(elapsedTime);
     }
 
     public void addEvent(Event e)

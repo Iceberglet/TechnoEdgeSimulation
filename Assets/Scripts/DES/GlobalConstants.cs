@@ -5,7 +5,7 @@ using System.Text;
 
 public class GlobalConstants
 {
-    public static readonly float TABLE_TAKER_RATIO = 0.5f;
+    public static readonly float TABLE_TAKER_RATIO = 0.99f;
     public static readonly float TABLE_SHARER_RATIO = 0.5f;  //Ratio of people willing to share a table
 
     public static readonly float Z_BOTTOM_NETWORK_1 = 10f;
@@ -14,7 +14,7 @@ public class GlobalConstants
     public static readonly float Z_BOTTOM_STATIC = 9f;
     public static readonly float Z_MOVING_OBJ = 5f;
 
-    public static readonly float WALK_SPEED = 4f; //0.7f;
+    public static readonly float WALK_SPEED = 0.7f;
     //Unit per second
 
 
@@ -24,9 +24,14 @@ public class GlobalConstants
         0.1f, 0.2f, 0.3f, 0.4f, 0.5f,
         0.6f, 0.7f, 0.8f, 0.9f, 1f
     };
+    public static readonly int[] STALL_SERVER = new int[10]
+    {
+        1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1
+    };
     private static readonly float[] ENTRY_PROBA = new float[4]
     {
-        0.3f, 0.38f, 0.98f, 1
+        0.25f, 0.36f, 0.96f, 1
     };
     private static readonly float[] GROUPSIZE_PROBA = new float[4]
     {

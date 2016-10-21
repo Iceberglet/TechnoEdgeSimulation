@@ -65,8 +65,9 @@
     <Compile Include="Assets\Scripts\EventCreators\Stall.cs" />
     <Compile Include="Assets\Scripts\EventCreators\StudentManager.cs" />
     <Compile Include="Assets\Scripts\EventCreators\Table.cs" />
-    <Compile Include="Assets\Scripts\GlobalConstants.cs" />
-    <Compile Include="Assets\Scripts\MapElement\RouteManager.cs" />
+    <Compile Include="Assets\Scripts\DES\GlobalConstants.cs" />
+    <Compile Include="Assets\Scripts\EventCreators\RouteManager.cs" />
+    <Compile Include="Assets\Scripts\EventCreators\TableManager.cs" />
     <Compile Include="Assets\Scripts\Student.cs" />
     <Compile Include="Assets\Scripts\StudentGroup.cs" />
     <Compile Include="Assets\Scripts\Test\TestDist.cs" />

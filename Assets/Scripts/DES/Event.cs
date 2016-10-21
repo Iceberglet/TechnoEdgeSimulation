@@ -12,7 +12,12 @@ public class Event
         TableArrival,       //Both for TableSeeking AND Before Dining
         TableDeparture,
         CanteenDeparture,
+
+        RoamToPoint
     }
+
+    private static long counter = 0;
+    public long ID;
 
     public readonly float timeStamp;
     public readonly EventType type;
@@ -21,6 +26,7 @@ public class Event
 
     public Event(float stamp, EventType type, Func<Event> f, string msg)
     {
+        ID = counter++;
         this.timeStamp = stamp;
         this.type = type;
         this.execute = f;

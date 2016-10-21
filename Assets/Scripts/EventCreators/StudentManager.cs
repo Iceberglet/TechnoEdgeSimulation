@@ -12,11 +12,13 @@ public class StudentManager : MonoBehaviour {
     public GameObject eventManager;
     private RouteManager routeManagerScript;
     private GlobalEventManager globalEventManager;
+    private TableManager tableManager;
 
     public GameObject studentTemplate;
     public GameObject studentGroupTemplate;
     private List<Student> students = new List<Student>();   //Needed for collective movement
-    private IntervalGenerator g;
+    private IntervalGenerator arrivalIntervalGenerator;
+    private IntervalGenerator eatingTimeGenerator;
 
     //Add in terms of group, Delete in terms of individual
     public StudentGroup addStudentGroup()
@@ -35,7 +37,7 @@ public class StudentManager : MonoBehaviour {
             GameObject newStudent = Instantiate(studentTemplate);
             Student s = newStudent.GetComponent<Student>();
             students.Add(s);
-            s.initialize(routeManagerScript.map_stalls[stall].GetComponent<Stall>(), groupScript, entry);
+            s.initialize(routeManagerScript.map_stalls[stall].GetComponent<Stall>(), groupScript, entry, eatingTimeGenerator.next());
             //3. Add to group
             groupScript.students.Add(s);
             s.transform.parent = groupObj.transform;
@@ -51,15 +53,17 @@ public class StudentManager : MonoBehaviour {
 
     public Event deleteStudent(Student s)
     {
-        Debug.Log("****** s.ID = " + s.ID + " *******");
-        if (s.group.students.Count <= 1)
+        if (s && s.group && s.group.students.Count <= 1)
             Destroy(s.group.gameObject);
-        //Remove from group
-        s.group.students.Remove(s);
-        //Remove from list
-        students.Remove(s);
-        //Remove from map
-        Destroy(s.gameObject);
+        else if(s != null)
+        {
+            //Remove from group
+            s.group.students.Remove(s);
+            //Remove from list
+            students.Remove(s);
+            //Remove from map
+            Destroy(s.gameObject);
+        }
         return null;
     }
 
@@ -68,7 +72,7 @@ public class StudentManager : MonoBehaviour {
     public Event getAnotherGroup()
     {
         //add entry event
-        float time = GlobalEventManager.currentTime + (float)(g.next());
+        float time = GlobalEventManager.currentTime + (float)(arrivalIntervalGenerator.next());
         //Debug.Log("Time: " + GlobalEventManager.currentTime + " Next Group Scheduled at: " + time);
         Event e = new Event(time, Event.EventType.CanteenArrival, this.getAnotherGroup,
              "Time: " + GlobalEventManager.currentTime + " Student Group Arrival");
@@ -76,19 +80,37 @@ public class StudentManager : MonoBehaviour {
         //Currently, for testing purpose only. This group has ENTERED NOW
         //TODO: Make student go loop
         StudentGroup group = addStudentGroup();
+        if (group.type == StudentGroup.Type.FoodFirst)
+        {
+            foreach (Student s in group.students)
+            {
+                Student another = s;
+                another.setPathTo(s.stallOfChoice.node, routeManagerScript);
+                float arrivalTime = GlobalEventManager.currentTime + another.ETA(null);
+                globalEventManager.addEvent(new Event(arrivalTime, Event.EventType.StallEnqueue, ()=> another.stallOfChoice.addStudent(another),
+                    "Time: " + arrivalTime + " Student ID: " + another.ID + " has arrived at stall"));
+            }
+        } else
+        {
+            foreach (Student s in group.students)
+            {
+                Student another = s;
+                globalEventManager.addEvent(tableManager.addTableSearchingStudent(another));
+            }
+        }
+        /*
         Node destination = routeManagerScript.map_entries[1];
         foreach (Student s in group.students)
         {
-            List<Node> path = routeManagerScript.getPath(s.prevNode, destination);
-            s.setPositionAndRoute(s.prevNode.coordinates, path);
             Student another = s;
+            List<Node> path = routeManagerScript.getPath(another.prevNode, destination);
+            another.setPositionAndRoute(another.prevNode.coordinates, path);
             Func<Event> delete = () => {
                 return deleteStudent(another);
             };
 
             //Triggered when student finishes the walk
-            //TODO: Add bool isRandomWalking to student
-            float expectedExitTime = GlobalEventManager.currentTime + Math.Max(path.Count - 1, 0) / GlobalConstants.WALK_SPEED;
+            float expectedExitTime = GlobalEventManager.currentTime + another.ETA(path.Last().coordinates);
 
             //Debug.Log("Time: " + GlobalEventManager.currentTime + " No. of Students: " + group.students.Count + " exiting at: " + expectedExitTime);
             routeManagerScript.Highlight(path);
@@ -96,16 +118,18 @@ public class StudentManager : MonoBehaviour {
             Event walk = new Event(expectedExitTime, Event.EventType.CanteenDeparture, delete,
                  "Time: " + GlobalEventManager.currentTime + " Student Reached a point to leave ");
             globalEventManager.addEvent(walk);
-        }
-        return e;
+        }*/
+        return null;
     }
 
     // Use this for initialization
-    public void initialize()
+    public void initialize(TableManager tableMan)
     {
+        tableManager = tableMan;
         routeManagerScript = routeManager.GetComponent<RouteManager>();
         globalEventManager = eventManager.GetComponent<GlobalEventManager>();
-        g = new StudentEntry();
+        arrivalIntervalGenerator = new StudentEntry();
+        eatingTimeGenerator = new EatingTime();
 	}
 	
 	// Update is called once per frame

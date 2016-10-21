@@ -57,13 +57,6 @@ public class Exp : IntervalGenerator
         if (lambda <= 0)
             throw new Exception("Invalid input for exp distribution: lambda = " + lambda);
         float p = (float)rand.NextDouble();
-        /*
-        var bytes = new Byte[8];
-        rand.GetBytes(bytes);
-        // Step 2: bit-shift 11 and 53 based on  float's mantissa bits
-        var ul = BitConverter.ToUInt64(bytes, 0) / (1 << 11);
-        Double p = ul / (Double)(1UL << 53);
-        */
         return (float)(Math.Log(1 - p) / (-lambda));
     }
 }
@@ -93,7 +86,16 @@ public class StudentEntry : IntervalGenerator
     public float next()
     {
         //TODO: Possibly get from a file
-        return 2;
+        return 5;
+    }
+}
+
+public class EatingTime : IntervalGenerator
+{
+    public float next()
+    {
+        //TODO: Possibly get from a file
+        return 20;
     }
 }
 
