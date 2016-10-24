@@ -83,10 +83,19 @@ public class Uniform : IntervalGenerator
 
 public class StudentEntry : IntervalGenerator
 {
+    int counter = 0;
+
     public float next()
     {
         //TODO: Possibly get from a file
-        return 20;
+        /*
+        if(counter >= 10)
+        {
+            return float.PositiveInfinity;
+        }
+        counter++;*/
+
+        return 2;
     }
 }
 
@@ -95,7 +104,7 @@ public class EatingTime : IntervalGenerator
     public float next()
     {
         //TODO: Possibly get from a file
-        return 300;
+        return 500;
     }
 }
 

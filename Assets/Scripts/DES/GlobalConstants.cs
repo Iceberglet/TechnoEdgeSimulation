@@ -12,10 +12,13 @@ public class GlobalConstants
     public static readonly float Z_BOTTOM_NETWORK_2 = 9.9f;
     public static readonly float Z_BOTTOM_NETWORK_3 = 9.8f;
     public static readonly float Z_BOTTOM_STATIC = 9f;
+    public static readonly float Z_TABLE_STATIC = 6f;
     public static readonly float Z_MOVING_OBJ = 5f;
 
     public static readonly float WALK_SPEED = 0.7f;
     //Unit per second
+
+    public static readonly bool allowTableSharing = true;
 
 
 

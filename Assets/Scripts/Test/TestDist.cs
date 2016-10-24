@@ -6,10 +6,13 @@ using System;
 public class TestDist : MonoBehaviour {
 
     int counter = 0;
+    public GameObject prefab;
 
 	// Use this for initialization
 	void Start () {
-
+        GameObject g = Instantiate(prefab);
+        g.transform.position = new Vector3(5, 5, 0);
+        /*
         List<LOL> lols = new List<LOL>();
         lols.Add(new LOL(1));
         lols.Add(new LOL(2));
@@ -24,13 +27,13 @@ public class TestDist : MonoBehaviour {
                 return 0;
             };
 
-            /*** Change to the following and it works! for no apparent reason!
+            ** Change to the following and it works! for no apparent reason!
             LOL another = l;
             Func<int> func = () =>
             {
                 Debug.Log(another.ID);
                 return 0;
-            };*/
+            };
 
 
             fs.Add(func);
@@ -38,7 +41,7 @@ public class TestDist : MonoBehaviour {
         foreach (Func<int> f in fs)
         {
             f();
-        }
+        }*/
     }
 	
 	// Update is called once per frame
