@@ -41,6 +41,9 @@ public class GlobalEventManager : MonoBehaviour {
 	}
 	
 	void Update () {
+        if (runningTime > GlobalConstants.SIMULATION_TIME)
+            return;
+
         int speedForThisFrame = speedFactor;
         float elapsedTime = speedForThisFrame * Time.deltaTime;
         runningTime += elapsedTime;

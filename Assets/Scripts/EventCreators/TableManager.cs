@@ -81,10 +81,14 @@ public class TableManager : MonoBehaviour
         if (s.hasFood)
         {
             //Sit and eat!
-            t.graphicAdd(s);
-            float time = GlobalEventManager.currentTime + s.eatingTime;
-            return new Event(time, Event.EventType.TableDeparture, ()=>releaseStudent(s, t),
-                "Time: " + time + " Student ID: " + s.ID + " has done eating.");
+            if (s != null)
+            {
+                t.graphicAdd(s);
+                float time = GlobalEventManager.currentTime + s.eatingTime;
+                return new Event(time, Event.EventType.TableDeparture, () => releaseStudent(s, t),
+                    "Time: " + time + " Student ID: " + s.ID + " has done eating.");
+            }
+            else return null;
         } else
         {
             //Send to stall

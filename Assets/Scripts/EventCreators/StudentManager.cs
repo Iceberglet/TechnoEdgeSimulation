@@ -45,6 +45,7 @@ public class StudentManager : MonoBehaviour {
             groupScript.students.Add(s);
             s.transform.parent = groupObj.transform;
         }
+        groupObj.transform.parent = this.transform;
         return groupScript;
     }
 

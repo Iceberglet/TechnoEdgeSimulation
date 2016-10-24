@@ -92,7 +92,7 @@ public class Table : MonoBehaviour {
                 case 2: pos = new Coordinates(topRight.x - offset, topRight.y - 1 + offset); break;
                 case 3: pos = new Coordinates(topRight.x - 1 + offset, topRight.y - 1 + offset); break;
                 case 4: pos = new Coordinates(topRight.x - 1 + offset, topRight.y - offset); break;
-                default: throw new System.Exception("Invalid operation. Table is full!");
+                default: return; // throw new System.Exception("Invalid operation. Table is full!");
             }
         }
         if (this.size == 2)
@@ -101,8 +101,12 @@ public class Table : MonoBehaviour {
             {
                 case 1: pos = new Coordinates(topRight.x - 0.5f, topRight.y - offset); break;
                 case 2: pos = new Coordinates(topRight.x - 0.5f, topRight.y - 1 + offset); break;
-                default: throw new System.Exception("Invalid operation. Table is full!");
+                default: return; // throw new System.Exception("Invalid operation. Table is full!");
             }
+        }
+        if(s == null)
+        {
+            Debug.Log("Shit why u gimme a null?");
         }
         s.gameObject.layer = 8;
         GameObject dummy = Instantiate(StudentManager.accessibleStudentTemplate);
@@ -114,9 +118,12 @@ public class Table : MonoBehaviour {
     {
         //s.setPositionAndRoute(this.node.coordinates, null);
         s.gameObject.layer = 0;
-        GameObject todestroy = dummies.First();
-        dummies.Remove(todestroy);
-        Destroy(todestroy);
+        if(dummies.Count > 0)
+        {
+            GameObject todestroy = dummies.First();
+            dummies.Remove(todestroy);
+            Destroy(todestroy);
+        }
     }
 
     public int availability()

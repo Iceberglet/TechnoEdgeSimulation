@@ -5,7 +5,8 @@ using System.Text;
 
 public class GlobalConstants
 {
-    public static int RANDOM_SEED = 99;
+    public static int RANDOM_SEED = 9;
+    public static readonly float SIMULATION_TIME = 2 * 60 * 60;
 
     public static readonly float TABLE_TAKER_RATIO = 0.7f;
     public static readonly float TABLE_SHARER_RATIO = 0.5f;  //Ratio of people willing to share a table
