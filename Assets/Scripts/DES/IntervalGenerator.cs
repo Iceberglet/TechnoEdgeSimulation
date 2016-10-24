@@ -20,7 +20,7 @@ public class Normal : IntervalGenerator
     private float mean;
     private float sd;
     private bool positive;
-    private Random rand = new Random();
+    private Random rand = new Random(GlobalConstants.RANDOM_SEED + 1);
 
     public Normal(float m, float sd, bool positive = true)
     {
@@ -44,7 +44,7 @@ public class Normal : IntervalGenerator
 public class Exp : IntervalGenerator
 {
     private float lambda;
-    private Random rand = new Random();
+    private Random rand = new Random(GlobalConstants.RANDOM_SEED + 2);
     //private RandomNumberGenerator rand = RandomNumberGenerator.Create();
 
     public Exp(float l)
@@ -65,7 +65,7 @@ public class Uniform : IntervalGenerator
 {
     private float l;
     private float r;
-    private Random rand = new Random();
+    private Random rand = new Random(GlobalConstants.RANDOM_SEED + 3);
 
     public Uniform(float l, float r)
     {
@@ -84,6 +84,7 @@ public class Uniform : IntervalGenerator
 public class StudentEntry : IntervalGenerator
 {
     int counter = 0;
+    private Random rand = new Random(GlobalConstants.RANDOM_SEED + 4);
 
     public float next()
     {
@@ -101,6 +102,8 @@ public class StudentEntry : IntervalGenerator
 
 public class EatingTime : IntervalGenerator
 {
+    private Random rand = new Random(GlobalConstants.RANDOM_SEED + 5);
+
     public float next()
     {
         //TODO: Possibly get from a file

@@ -46,7 +46,6 @@ public class Table : MonoBehaviour {
                 }
                 errorMsg += "\nAttempted to add Student: " + s.ID;
                 throw new System.Exception(errorMsg);
-
             }
         }
         s.table = this;

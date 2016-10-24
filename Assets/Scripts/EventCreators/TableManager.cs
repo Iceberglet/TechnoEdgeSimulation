@@ -46,34 +46,32 @@ public class TableManager : MonoBehaviour
                 .OrderBy(stu => Coordinates.distGrid(stu.currentPos, t.node.coordinates)).ToList();
             if(s.Count > 0)
             {
+                int tableBeforeAdding = t.students.Count;
                 s = s.First().group.students;
-            } else
-            {
-                availableTables.Add(t);
+                foreach (Student x in s)
+                {
+                    Student x1 = x;
+                    x1.isRoaming = false;
+                    //Debug.Log("**** Table Emptied, stop roaming: " + x1.ID);
+                    t.addStudent(x1);
+                    eventManager.addEvent(boundStudentToTable(x1, t));
+                    roamingStudents.Remove(x1);
+                }
+                int tableAfterAdding = t.students.Count;
+                if (tableBeforeAdding + s.Count != tableAfterAdding)
+                    throw new Exception("Mismatch: " + tableBeforeAdding + " - " + s.Count + " != " + tableAfterAdding);
                 return null;
-            }
-            foreach(Student x in s)
-            {
-                Student x1 = x;
-                x1.isRoaming = false;
-                //Debug.Log("**** Table Emptied, stop roaming: " + x1.ID);
-                eventManager.addEvent(boundStudentToTable(x1, t));
-                roamingStudents.Remove(x1);
-            }
-            return null;
+            } 
         }
-        else
-        {
-            availableTables.Add(t);
-            return null;
-        }
+        availableTables.Add(t);
+        return null;
     }
 
     //When a student is GOING TO a table
     public Event boundStudentToTable(Student s, Table t)
     {
         //s.table = t;
-        t.addStudent(s);
+        //t.addStudent(s);
         if (!GlobalConstants.allowTableSharing || t.status == Table.Status.Full)
             availableTables.Remove(t);
         s.setPathTo(t.node, routeManager);
@@ -141,17 +139,19 @@ public class TableManager : MonoBehaviour
             return boundStudentToTable(s, friendsWithTable.First().table);
         }
 
-        //TODO: check if there are available tables FIRST!
+        //Check if there are available tables FIRST!
         if (availableTables.Count > 0)
         {
             //Select one that has enough seats and 
             IEnumerable<Table> eligible = availableTables.Where(t => (t.availability() >= s.group.students.Count));
             if (eligible.Count() > 0)
             {
+                //Is Closest to the student
                 Table target = eligible.OrderBy(t => Coordinates.distGrid(s.currentPos, t.node.coordinates)).First();
                 foreach (Student studentInGroup in s.group.students)
                 {
                     studentInGroup.table = target;
+                    target.addStudent(studentInGroup);
                     //Student s2 = studentInGroup;
                     //eventManager.addEvent(boundStudentToTable(s2, target));
                 }

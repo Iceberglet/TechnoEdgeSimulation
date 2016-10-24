@@ -5,7 +5,9 @@ using System.Text;
 
 public class GlobalConstants
 {
-    public static readonly float TABLE_TAKER_RATIO = 0.99f;
+    public static int RANDOM_SEED = 99;
+
+    public static readonly float TABLE_TAKER_RATIO = 0.7f;
     public static readonly float TABLE_SHARER_RATIO = 0.5f;  //Ratio of people willing to share a table
 
     public static readonly float Z_BOTTOM_NETWORK_1 = 10f;
@@ -46,7 +48,7 @@ public class GlobalConstants
         "WOK_", "JAP_", "CHIC", "WEST", "CHIN"
     };
 
-    public static Random rand = new Random();
+    public static Random rand = new Random(GlobalConstants.RANDOM_SEED);
 
     public static int getStudentGroupSize()
     {

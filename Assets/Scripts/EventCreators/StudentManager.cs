@@ -20,6 +20,7 @@ public class StudentManager : MonoBehaviour {
     private List<Student> students = new List<Student>();   //Needed for collective movement
     private IntervalGenerator arrivalIntervalGenerator;
     private IntervalGenerator eatingTimeGenerator;
+    private System.Random rand;
 
     //Add in terms of group, Delete in terms of individual
     public StudentGroup addStudentGroup()
@@ -29,7 +30,7 @@ public class StudentManager : MonoBehaviour {
         Node entry = routeManagerScript.map_entries[GlobalConstants.getEntry()];
         int number = GlobalConstants.getStudentGroupSize();
         //1. Determine Group Type.
-        StudentGroup.Type type = GlobalConstants.rand.NextDouble() < GlobalConstants.TABLE_TAKER_RATIO ? StudentGroup.Type.TableFirst : StudentGroup.Type.FoodFirst;
+        StudentGroup.Type type = rand.NextDouble() < GlobalConstants.TABLE_TAKER_RATIO ? StudentGroup.Type.TableFirst : StudentGroup.Type.FoodFirst;
         groupScript.type = type;
         for (int i = 0; i < number; i++)
         {
@@ -100,33 +101,13 @@ public class StudentManager : MonoBehaviour {
                 globalEventManager.addEvent(tableManager.addTableSearchingStudent(another));
             }
         }
-        /*
-        Node destination = routeManagerScript.map_entries[1];
-        foreach (Student s in group.students)
-        {
-            Student another = s;
-            List<Node> path = routeManagerScript.getPath(another.prevNode, destination);
-            another.setPositionAndRoute(another.prevNode.coordinates, path);
-            Func<Event> delete = () => {
-                return deleteStudent(another);
-            };
-
-            //Triggered when student finishes the walk
-            float expectedExitTime = GlobalEventManager.currentTime + another.ETA(path.Last().coordinates);
-
-            //Debug.Log("Time: " + GlobalEventManager.currentTime + " No. of Students: " + group.students.Count + " exiting at: " + expectedExitTime);
-            routeManagerScript.Highlight(path);
-
-            Event walk = new Event(expectedExitTime, Event.EventType.CanteenDeparture, delete,
-                 "Time: " + GlobalEventManager.currentTime + " Student Reached a point to leave ");
-            globalEventManager.addEvent(walk);
-        }*/
         return e;
     }
 
     // Use this for initialization
     public void initialize(TableManager tableMan)
     {
+        rand = new System.Random(GlobalConstants.RANDOM_SEED);
         accessibleStudentTemplate = Instantiate(studentTemplate);
         accessibleStudentTemplate.GetComponent<SpriteRenderer>().color = Color.white;
         accessibleStudentTemplate.transform.position = new Vector3(99, 99, -99);

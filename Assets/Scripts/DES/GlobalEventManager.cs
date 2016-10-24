@@ -28,7 +28,7 @@ public class GlobalEventManager : MonoBehaviour {
     {
         currentTime = 0;
         runningTime = 0;
-        speedFactor = 20;
+        speedFactor = 60;
         events = new List<Event>();
         routeMan = routeManager.GetComponent<RouteManager>();
         studentMan = studentManager.GetComponent<StudentManager>();
@@ -51,8 +51,8 @@ public class GlobalEventManager : MonoBehaviour {
             currentTime = events.First().timeStamp;
             //Execute the first event - which may add another event
             Event toExecute = events.First();
-            if(toExecute.type != Event.EventType.RoamToPoint)
-                Debug.Log("Event " + toExecute.ID + " " + toExecute.msg);
+            //if(toExecute.type != Event.EventType.RoamToPoint)
+            //    Debug.Log("Event " + toExecute.ID + " " + toExecute.msg);
             this.addEvent(toExecute.execute());
             events.Remove(toExecute);
         }
