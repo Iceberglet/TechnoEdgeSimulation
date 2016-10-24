@@ -15,7 +15,6 @@ public class StudentManager : MonoBehaviour {
     private TableManager tableManager;
 
     public GameObject studentTemplate;
-    public static GameObject accessibleStudentTemplate;
     public GameObject studentGroupTemplate;
     private List<Student> students = new List<Student>();   //Needed for collective movement
     private IntervalGenerator arrivalIntervalGenerator;
@@ -127,10 +126,6 @@ public class StudentManager : MonoBehaviour {
     // Use this for initialization
     public void initialize(TableManager tableMan)
     {
-        accessibleStudentTemplate = Instantiate(studentTemplate);
-        accessibleStudentTemplate.GetComponent<SpriteRenderer>().color = Color.white;
-        accessibleStudentTemplate.transform.position = new Vector3(99, 99, -99);
-
         tableManager = tableMan;
         routeManagerScript = routeManager.GetComponent<RouteManager>();
         globalEventManager = eventManager.GetComponent<GlobalEventManager>();

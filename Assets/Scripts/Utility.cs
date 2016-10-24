@@ -2,26 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine;
 
 public static class Utility
 {
-    public static string Path
-    {
-        get
-        {
-            if (Application.platform == RuntimePlatform.WindowsPlayer)
-            {
-                return Application.dataPath + "/../";
-            }
-            else if (Application.platform == RuntimePlatform.OSXPlayer)
-            {
-                return Application.dataPath + "/../../";
-            }
-            else return Application.dataPath;
-        }
-    }
-
     public static bool checkFloatEqual(float a, float b, float epsilon = 0.0001f)
     {
         float absA = Math.Abs(a);

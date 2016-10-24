@@ -69,7 +69,7 @@ public class Stall : MonoBehaviour {
     
 	// Use this for initialization
 	void Start () {
-        g = new Uniform(20,40);
+        g = new Exp(0.1f);
 	}
 	
 	// Update is called once per frame

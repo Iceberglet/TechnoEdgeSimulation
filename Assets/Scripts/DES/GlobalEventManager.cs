@@ -24,11 +24,10 @@ public class GlobalEventManager : MonoBehaviour {
     private static float runningTime;   //Used for speed control
     public static float currentTime { get; private set; }   //Used by various Event Generators - measured in seconds
 
-	void Start ()
-    {
+	void Start () {
         currentTime = 0;
         runningTime = 0;
-        speedFactor = 20;
+        speedFactor = 50;
         events = new List<Event>();
         routeMan = routeManager.GetComponent<RouteManager>();
         studentMan = studentManager.GetComponent<StudentManager>();
@@ -51,8 +50,7 @@ public class GlobalEventManager : MonoBehaviour {
             currentTime = events.First().timeStamp;
             //Execute the first event - which may add another event
             Event toExecute = events.First();
-            if(toExecute.type != Event.EventType.RoamToPoint)
-                Debug.Log("Event " + toExecute.ID + " " + toExecute.msg);
+            Debug.Log("Event " + toExecute.ID + " " + toExecute.msg);
             this.addEvent(toExecute.execute());
             events.Remove(toExecute);
         }

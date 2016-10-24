@@ -36,23 +36,14 @@ public class TableManager : MonoBehaviour
         }
     }
 
-    public Event notifyGroupLeaveTable(Table t)
+    public Event notifyTableEmptied(Table t)
     {
         if (roamingStudents.Count > 0)
         {
             //Find the closest student and his group
-            List<Student> s = roamingStudents
-                .Where(x => (GlobalConstants.allowTableSharing ? t.availability() >= x.group.students.Count : t.status == Table.Status.Empty))
-                .OrderBy(stu => Coordinates.distGrid(stu.currentPos, t.node.coordinates)).ToList();
-            if(s.Count > 0)
-            {
-                s = s.First().group.students;
-            } else
-            {
-                availableTables.Add(t);
-                return null;
-            }
-            foreach(Student x in s)
+            StudentGroup s = roamingStudents.Where(x => (t.availability() >= x.group.students.Count))
+                .OrderBy(stu => Coordinates.distGrid(stu.currentPos, t.node.coordinates)).First().group;
+            foreach(Student x in s.students)
             {
                 Student x1 = x;
                 x1.isRoaming = false;
@@ -74,8 +65,6 @@ public class TableManager : MonoBehaviour
     {
         //s.table = t;
         t.addStudent(s);
-        if (!GlobalConstants.allowTableSharing || t.status == Table.Status.Full)
-            availableTables.Remove(t);
         s.setPathTo(t.node, routeManager);
         float time = s.ETA(null) + GlobalEventManager.currentTime;
         return new Event(time, Event.EventType.TableArrival, () => studentArrive(s, t),
@@ -88,7 +77,6 @@ public class TableManager : MonoBehaviour
         if (s.hasFood)
         {
             //Sit and eat!
-            t.graphicAdd(s);
             float time = GlobalEventManager.currentTime + s.eatingTime;
             return new Event(time, Event.EventType.TableDeparture, ()=>releaseStudent(s, t),
                 "Time: " + time + " Student ID: " + s.ID + " has done eating.");
@@ -112,7 +100,6 @@ public class TableManager : MonoBehaviour
         {
             foreach (Student x in s.group.students)
             {
-                t.graphicRemove(s);
                 Student ars = x;
                 ars.setPathTo(findClosestExit(ars.currentPos), routeManager);    //Get the closest exit
                 t.removeStudent(ars);
@@ -120,7 +107,8 @@ public class TableManager : MonoBehaviour
                 eventManager.addEvent(new Event(time, Event.EventType.CanteenDeparture, () => studentManager.deleteStudent(ars),
                     "Time: " + time + " Student ID: " + ars.ID + " has left"));
             }
-            notifyGroupLeaveTable(s.table);
+            if(t.status == Table.Status.Empty)
+                notifyTableEmptied(s.table);
         }
         return null;
     }
@@ -145,25 +133,18 @@ public class TableManager : MonoBehaviour
         if (availableTables.Count > 0)
         {
             //Select one that has enough seats and 
-            IEnumerable<Table> eligible = availableTables.Where(t => (t.availability() >= s.group.students.Count));
-            if (eligible.Count() > 0)
+            Table target = availableTables.Where(t => (t.availability() >= s.group.students.Count))
+                .OrderBy(t => Coordinates.distGrid(s.currentPos, t.node.coordinates)).First();
+            availableTables.Remove(target);
+            foreach (Student studentInGroup in s.group.students)
             {
-                Table target = eligible.OrderBy(t => Coordinates.distGrid(s.currentPos, t.node.coordinates)).First();
-                foreach (Student studentInGroup in s.group.students)
-                {
-                    studentInGroup.table = target;
-                    //Student s2 = studentInGroup;
-                    //eventManager.addEvent(boundStudentToTable(s2, target));
-                }
-                return boundStudentToTable(s, target);
+                studentInGroup.table = target;
+                //Student s2 = studentInGroup;
+                //eventManager.addEvent(boundStudentToTable(s2, target));
             }
+            return boundStudentToTable(s, target);
         }
         //Debug.Log("No available table, start roaming.");
-        if (roamingStudents.Count > 200)
-            Debug.Log("********* WARNING: TOO MANY TABLELESS STUDENT(>200) *************");
-        if (roamingStudents.Count > 300)
-            throw new Exception("********* Exception: TOO MANY TABLELESS STUDENT (>300) *************");
-
         s.isRoaming = true;
         roamingStudents.Add(s);
         return startRoaming(s);

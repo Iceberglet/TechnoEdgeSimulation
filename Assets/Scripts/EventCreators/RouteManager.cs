@@ -32,7 +32,6 @@ public class RouteManager : MonoBehaviour
     //Use a graph of coordinates to represent the grid
     //Each edge should be used to represent a path
 
-
     //Initialize the map
     public void initialize()
     {
@@ -41,9 +40,9 @@ public class RouteManager : MonoBehaviour
         Node[,] tempMap = new Node[24, 19];
         //Initialize Node Types
         //IMPORTANT TODO: Change the path to an executable one after publishing
-        int[,] grid = readLayoutFromFile(Utility.Path + "/Data/layout_cornerGrid.txt");
-        int[,] table = readLayoutFromFile(Utility.Path + "/Data/layout_withTable.txt");
-        int[,] mainLoop = readLayoutFromFile(Utility.Path + "/Data/layout_mainloop.txt");
+        int[,] grid = readLayoutFromFile(Environment.CurrentDirectory + "\\Assets\\Scripts\\MapElement\\layout_cornerGrid.txt");
+        int[,] table = readLayoutFromFile(Environment.CurrentDirectory + "\\Assets\\Scripts\\MapElement\\layout_withTable.txt");
+        int[,] mainLoop = readLayoutFromFile(Environment.CurrentDirectory + "\\Assets\\Scripts\\MapElement\\layout_mainloop.txt");
 
         for (int i = 0; i < tempMap.GetLength(0); ++i)
         {

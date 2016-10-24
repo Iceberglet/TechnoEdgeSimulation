@@ -78,7 +78,7 @@ public class Student : MonoBehaviour {
         return Coordinates.distGrid(currentPos, target) / GlobalConstants.WALK_SPEED;
     }
 
-    private void setPositionInUnity()
+    public void setPositionInUnity()
     {
         this.transform.position = new Vector3(currentPos.x, currentPos.y, GlobalConstants.Z_MOVING_OBJ);
     }
