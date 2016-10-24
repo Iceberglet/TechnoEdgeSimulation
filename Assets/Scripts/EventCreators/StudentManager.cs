@@ -31,6 +31,7 @@ public class StudentManager : MonoBehaviour {
         int number = GlobalConstants.getStudentGroupSize();
         //1. Determine Group Type.
         StudentGroup.Type type = rand.NextDouble() < GlobalConstants.TABLE_TAKER_RATIO ? StudentGroup.Type.TableFirst : StudentGroup.Type.FoodFirst;
+        groupScript.isSharer = rand.NextDouble() < GlobalConstants.TABLE_SHARER_RATIO ? true : false;
         groupScript.type = type;
         for (int i = 0; i < number; i++)
         {

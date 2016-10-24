@@ -12,4 +12,5 @@ public class StudentGroup : MonoBehaviour
     public List<Student> students = new List<Student>();
     public enum Type { TableFirst, FoodFirst };  //take a table first or go to stall first
     public Type type;
+    public bool isSharer;
 }

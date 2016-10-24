@@ -28,7 +28,7 @@ public class TableManager : MonoBehaviour
         }
 
         //Add all tables
-        Debug.Log("Tables: " + r.tables.Count);
+        //Debug.Log("Tables: " + r.tables.Count);
         foreach (Table t in r.tables)
         {
             this.tables.Add(t);
@@ -42,11 +42,11 @@ public class TableManager : MonoBehaviour
         {
             //Find the closest student and his group
             List<Student> s = roamingStudents
-                .Where(x => (GlobalConstants.allowTableSharing ? t.availability() >= x.group.students.Count : t.status == Table.Status.Empty))
+                //None sharer will solely look for an empty table. Thanks for asking!
+                .Where(x => (x.group.isSharer ? t.availability() >= x.group.students.Count : t.students.Count == 0 && t.size >= x.group.students.Count))
                 .OrderBy(stu => Coordinates.distGrid(stu.currentPos, t.node.coordinates)).ToList();
             if(s.Count > 0)
             {
-                int tableBeforeAdding = t.students.Count;
                 s = s.First().group.students;
                 foreach (Student x in s)
                 {
@@ -57,9 +57,6 @@ public class TableManager : MonoBehaviour
                     eventManager.addEvent(boundStudentToTable(x1, t));
                     roamingStudents.Remove(x1);
                 }
-                int tableAfterAdding = t.students.Count;
-                if (tableBeforeAdding + s.Count != tableAfterAdding)
-                    throw new Exception("Mismatch: " + tableBeforeAdding + " - " + s.Count + " != " + tableAfterAdding);
                 return null;
             } 
         }
@@ -70,9 +67,7 @@ public class TableManager : MonoBehaviour
     //When a student is GOING TO a table
     public Event boundStudentToTable(Student s, Table t)
     {
-        //s.table = t;
-        //t.addStudent(s);
-        if (!GlobalConstants.allowTableSharing || t.status == Table.Status.Full)
+        if (t.status == Table.Status.Full)
             availableTables.Remove(t);
         s.setPathTo(t.node, routeManager);
         float time = s.ETA(null) + GlobalEventManager.currentTime;
@@ -142,12 +137,15 @@ public class TableManager : MonoBehaviour
         //Check if there are available tables FIRST!
         if (availableTables.Count > 0)
         {
-            //Select one that has enough seats and 
-            IEnumerable<Table> eligible = availableTables.Where(t => (t.availability() >= s.group.students.Count));
+            //Select one that has enough seats OR EMPTY! 
+            IEnumerable<Table> eligible = availableTables
+                .Where(t => (s.group.isSharer? t.availability() >= s.group.students.Count : t.students.Count == 0 && t.size >= s.group.students.Count));
             if (eligible.Count() > 0)
             {
                 //Is Closest to the student
                 Table target = eligible.OrderBy(t => Coordinates.distGrid(s.currentPos, t.node.coordinates)).First();
+                //Debug.Log("Current: " + target.students.Count + " Available: " + target.availability() + " to add: " + s.group.students.Count + " isSharer? " + s.group.isSharer);
+
                 foreach (Student studentInGroup in s.group.students)
                 {
                     studentInGroup.table = target;
