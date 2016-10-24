@@ -4,7 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Student : MonoBehaviour {
-    public enum Stage { GetTable, GetFood, GoToTable, EatFood, Leave };
+    //******************* For Recording Purposes *********************
+    public float searchStart = -1f;
+    public float searchEnd = -1f;
+
+
+
     //****************************************************************
 
     public StudentGroup group { get; private set; }

@@ -36,7 +36,7 @@ public class TableManager : MonoBehaviour
         }
     }
 
-    public Event notifyGroupLeaveTable(Table t)
+    public void notifyGroupLeaveTable(Table t)
     {
         if (roamingStudents.Count > 0)
         {
@@ -56,12 +56,13 @@ public class TableManager : MonoBehaviour
                     t.addStudent(x1);
                     eventManager.addEvent(boundStudentToTable(x1, t));
                     roamingStudents.Remove(x1);
+                    x1.searchEnd = GlobalEventManager.currentTime;
                 }
-                return null;
+                return;
             } 
         }
         availableTables.Add(t);
-        return null;
+        return;
     }
 
     //When a student is GOING TO a table
@@ -103,13 +104,11 @@ public class TableManager : MonoBehaviour
     //Student READY to its entry point
     public Event releaseStudent(Student s, Table t)
     {
-        //TODO
         s.finishedHisBusiness = true;
         if (s.group.students.All(student => student.finishedHisBusiness))
         {
             foreach (Student x in s.group.students)
             {
-                t.graphicRemove(s);
                 Student ars = x;
                 ars.setPathTo(findClosestExit(ars.currentPos), routeManager);    //Get the closest exit
                 t.removeStudent(ars);
@@ -125,6 +124,7 @@ public class TableManager : MonoBehaviour
     //Add in a student who is BEGINNING to search for a Table
     public Event addTableSearchingStudent(Student s)
     {
+        s.searchStart = s.searchEnd = GlobalEventManager.currentTime;
         //This is a student whose friends have already got him a table
         if (s.table != null)
         {

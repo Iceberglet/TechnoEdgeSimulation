@@ -36,6 +36,7 @@ public class GlobalEventManager : MonoBehaviour {
         routeMan.initialize();
         studentMan.initialize(tableMan);
         tableMan.initialize(routeMan, this, studentMan);
+        GlobalRegistry.initialize(routeMan.tables);
 
         addEvent(studentMan.getAnotherGroup());
 	}

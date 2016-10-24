@@ -57,17 +57,18 @@ public class StudentManager : MonoBehaviour {
 
     public Event deleteStudent(Student s)
     {
-        if(s != null)
+        if (s != null)
         {
-            GameObject group = s.group.gameObject;
+            GlobalRegistry.signalStudent(s);
+            StudentGroup group = s.group;
             //Remove from group
             s.group.students.Remove(s);
             //Remove from list
             students.Remove(s);
             //Remove from map
             Destroy(s.gameObject);
-            if (s.group && s.group.students.Count <= 1)
-                Destroy(group);
+            if (group.students.Count == 0)
+                Destroy(group.gameObject);
         }
         return null;
     }
