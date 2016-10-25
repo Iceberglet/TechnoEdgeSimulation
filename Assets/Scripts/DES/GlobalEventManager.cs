@@ -17,8 +17,8 @@ public class GlobalEventManager : MonoBehaviour {
     //If needs to be done within 20 seconds at fastest speed 
     // -> 1 frame = 1 deltaTime
     // -> the simulated time elapsed should be (deltaTime * 2 * 3600 / 20 = 360 * deltaTime)
-    private static int speedFactor;   //0, 1, 10, 100, 1000
-    private static bool disabled;     //Should animation run?
+    private static int speedFactor = 1;   //0, 1, 10, 100, 1000
+    private static bool isRunning = false;     //Should animation run?
 
     private static List<Event> events;
     private static float runningTime;   //Used for speed control
@@ -26,9 +26,14 @@ public class GlobalEventManager : MonoBehaviour {
 
 	void Start ()
     {
+        reStart();
+	}
+
+    private void reStart(int speed = 1)
+    {
         currentTime = 0;
         runningTime = 0;
-        speedFactor = 60;
+        speedFactor = speed;
         events = new List<Event>();
         routeMan = routeManager.GetComponent<RouteManager>();
         studentMan = studentManager.GetComponent<StudentManager>();
@@ -37,12 +42,28 @@ public class GlobalEventManager : MonoBehaviour {
         studentMan.initialize(tableMan);
         tableMan.initialize(routeMan, this, studentMan);
         GlobalRegistry.initialize(routeMan.tables);
-
         addEvent(studentMan.getAnotherGroup());
-	}
+    }
+
+    public void ChangeSpeed(int newSpeed)
+    {
+        if (!isRunning)
+        {
+            Application.LoadLevel(Application.loadedLevel);
+            isRunning = true;
+            Debug.Log(newSpeed);
+            reStart(newSpeed);
+        }
+        speedFactor = newSpeed;
+    }
+
+    public void Stop()
+    {
+        isRunning = false;
+    }
 	
 	void Update () {
-        if (runningTime > GlobalConstants.SIMULATION_TIME)
+        if (!isRunning || runningTime > GlobalConstants.SIMULATION_TIME)
             return;
 
         int speedForThisFrame = speedFactor;
@@ -61,7 +82,7 @@ public class GlobalEventManager : MonoBehaviour {
             events.Remove(toExecute);
         }
         //Finish up by move the students that are en route?
-        if(speedForThisFrame < 100)
+        if(speedForThisFrame < 101)
             studentMan.advanceAllStudents(elapsedTime);
     }
 
