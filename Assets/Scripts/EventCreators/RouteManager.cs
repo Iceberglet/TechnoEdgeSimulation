@@ -26,7 +26,7 @@ public class RouteManager : MonoBehaviour
     public Dictionary<Node, List<Node>> pathToMainLoop;
     public List<Node> mainLoopNodes = new List<Node>();
 
-    public List<Table> tables = new List<Table>();
+    public List<Table> tables;
 
     //******** Map Element **********
     //Use a graph of coordinates to represent the grid
@@ -36,6 +36,14 @@ public class RouteManager : MonoBehaviour
     //Initialize the map
     public void initialize()
     {
+        if (tables != null)
+        {
+            foreach (Table t in tables)
+            {
+                Destroy(t.gameObject);
+            }
+        }
+        tables = new List<Table>();
         map_entries = new Node[4];
         map_stalls = new GameObject[10];
         Node[,] tempMap = new Node[24, 19];

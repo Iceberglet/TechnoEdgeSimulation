@@ -150,6 +150,7 @@ public class Table : MonoBehaviour {
         GameObject dummy = Instantiate(StudentManager.accessibleStudentTemplate);
         dummy.transform.position = new Vector3(pos.x, pos.y, GlobalConstants.Z_TABLE_STATIC);
         dummies.Add(dummy);
+        dummy.transform.parent = this.transform;
         update(GlobalEventManager.currentTime);
     }
 

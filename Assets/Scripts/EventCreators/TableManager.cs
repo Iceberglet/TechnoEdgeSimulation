@@ -77,6 +77,7 @@ public class TableManager : MonoBehaviour
     }
 
     //Event at the MOMENT student arrives
+    //NOTE: somehow this is called twice for a single student at a point. Might wanna look into it
     public Event studentArrive(Student s, Table t)
     {
         if (s.hasFood)

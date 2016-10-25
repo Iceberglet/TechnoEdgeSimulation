@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\StudentGroup.cs" />
     <Compile Include="Assets\Scripts\Test\TestDist.cs" />
     <Compile Include="Assets\Scripts\UI\DummyScene.cs" />
+    <Compile Include="Assets\Scripts\UIManager.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
   </ItemGroup>
   <ItemGroup>

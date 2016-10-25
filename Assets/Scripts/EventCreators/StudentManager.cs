@@ -121,6 +121,7 @@ public class StudentManager : MonoBehaviour {
         arrivalIntervalGenerator = new StudentEntry();
         eatingTimeGenerator = new EatingTime();
 	}
+    
 	
 	// Update is called once per frame
 	void Update () {
