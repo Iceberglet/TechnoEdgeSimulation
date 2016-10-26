@@ -1,0 +1,93 @@
+Initialize engine version: 5.0.0f4 (5b98b70ebeb9)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: Intel(R) HD Graphics 5500 (ID=0x1616)
+    Vendor:   Intel
+    VRAM:     128 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Iceberglet\OneDrive\Master_Modules\IE5504\Project - School Canteen Simulation\School Canteen\Builds\TechnoEdgeSimulation_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Iceberglet\OneDrive\Master_Modules\IE5504\Project - School Canteen Simulation\School Canteen\Builds\TechnoEdgeSimulation_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Iceberglet\OneDrive\Master_Modules\IE5504\Project - School Canteen Simulation\School Canteen\Builds\TechnoEdgeSimulation_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Iceberglet\OneDrive\Master_Modules\IE5504\Project - School Canteen Simulation\School Canteen\Builds\TechnoEdgeSimulation_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Iceberglet\OneDrive\Master_Modules\IE5504\Project - School Canteen Simulation\School Canteen\Builds\TechnoEdgeSimulation_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Iceberglet\OneDrive\Master_Modules\IE5504\Project - School Canteen Simulation\School Canteen\Builds\TechnoEdgeSimulation_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+- Completed reload, in  0.067 seconds
+desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+Platform assembly: C:\Users\Iceberglet\OneDrive\Master_Modules\IE5504\Project - School Canteen Simulation\School Canteen\Builds\TechnoEdgeSimulation_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Iceberglet\OneDrive\Master_Modules\IE5504\Project - School Canteen Simulation\School Canteen\Builds\TechnoEdgeSimulation_Data\Managed\System.dll (this message is harmless)
+Unloading 1 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.737276 ms
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 276.
+Total: 0.321168 ms (FindLiveObjects: 0.026514 ms CreateObjectMapping: 0.026514 ms MarkObjects: 0.259586 ms  DeleteObjects: 0.007697 ms)
+
+Clicked Button: 2
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Unloading 1 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 4.885950 ms
+
+Unloading 2 unused Assets to reduce memory usage. Loaded Objects now: 280.
+Total: 0.943833 ms (FindLiveObjects: 0.068424 ms CreateObjectMapping: 0.012401 ms MarkObjects: 0.858302 ms  DeleteObjects: 0.003848 ms)
+
+Clicked Button: 3
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Clicked Button: 4
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Clicked Button: 3
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Clicked Button: 4
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Clicked Button: 5
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Clicked Button: 4
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Student: 408 has searched for 2.666077
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Student: 424 has searched for 14.68823
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Student: 423 has searched for 69.72467
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Student: 417 has searched for 112.7518
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Student: 418 has searched for 49.04474
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Student: 380 has searched for 114.2788
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+
+Clicked Button: 3
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebug.gen.cpp Line: 56)
+

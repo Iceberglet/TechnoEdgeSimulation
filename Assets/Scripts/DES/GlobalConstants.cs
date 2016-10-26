@@ -6,10 +6,20 @@ using System.Text;
 public class GlobalConstants
 {
     public static int RANDOM_SEED = 9;
-    public static readonly float SIMULATION_TIME = 2 * 60 * 60;
+    public static float TABLE_TAKER_RATIO = 0.7f;
+    public static float TABLE_SHARER_RATIO = 0.5f;
 
-    public static readonly float TABLE_TAKER_RATIO = 0.7f;
-    public static readonly float TABLE_SHARER_RATIO = 0.5f;  //Ratio of people willing to share a table
+    public static void updateConfig(int seed, float taker, float sharer)
+    {
+        RANDOM_SEED = seed;
+        TABLE_SHARER_RATIO = sharer;
+        TABLE_TAKER_RATIO = taker;
+    }
+
+
+
+    public static readonly float SIMULATION_TIME = 2 * 60 * 60;
+  //Ratio of people willing to share a table
 
     public static readonly float Z_BOTTOM_NETWORK_1 = 10f;
     public static readonly float Z_BOTTOM_NETWORK_2 = 9.9f;
@@ -21,7 +31,7 @@ public class GlobalConstants
     public static readonly float WALK_SPEED = 0.7f;
     //Unit per second
 
-    public static readonly bool allowTableSharing = true;
+    //public static readonly bool allowTableSharing = true;
 
 
 

@@ -111,7 +111,7 @@ public class Table : MonoBehaviour {
         else
         {
             status = Status.Half;
-            this.gameObject.GetComponent<SpriteRenderer>().color = GlobalConstants.allowTableSharing ? Color.blue : Color.red;
+            this.gameObject.GetComponent<SpriteRenderer>().color = GlobalConstants.TABLE_SHARER_RATIO > 0 ? Color.blue : Color.red;
         }
         update(GlobalEventManager.currentTime);
         return status;

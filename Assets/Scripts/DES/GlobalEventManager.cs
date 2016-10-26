@@ -21,7 +21,7 @@ public class GlobalEventManager : MonoBehaviour {
     private static bool isRunning = false;     //Should animation run?
 
     private static List<Event> events;
-    private static float runningTime;   //Used for speed control
+    public static float runningTime { get; private set; }   //Used for speed control
     public static float currentTime { get; private set; }   //Used by various Event Generators - measured in seconds
 
 	void Start ()
