@@ -121,7 +121,9 @@ public class Table : MonoBehaviour {
     public void graphicAdd(Student s)
     {
         Coordinates topRight = this.node.coordinates;
-        Coordinates pos = null;    //For this student
+        Coordinates pos = new Coordinates(-10, -10);    //For this student
+
+        s.gameObject.layer = 8;
 
         if (this.size == 4)
         {
@@ -131,7 +133,7 @@ public class Table : MonoBehaviour {
                 case 2: pos = new Coordinates(topRight.x - offset, topRight.y - 1 + offset); break;
                 case 3: pos = new Coordinates(topRight.x - 1 + offset, topRight.y - 1 + offset); break;
                 case 4: pos = new Coordinates(topRight.x - 1 + offset, topRight.y - offset); break;
-                default:  return; // throw new System.Exception("Invalid operation. Table is full!");
+                default: break; // throw new System.Exception("Invalid operation. Table is full!");
             }
         }
         if (this.size == 2)
@@ -140,14 +142,14 @@ public class Table : MonoBehaviour {
             {
                 case 1: pos = new Coordinates(topRight.x - 0.5f, topRight.y - offset); break;
                 case 2: pos = new Coordinates(topRight.x - 0.5f, topRight.y - 1 + offset); break;
-                default: return; // throw new System.Exception("Invalid operation. Table is full!");
+                default: break; // throw new System.Exception("Invalid operation. Table is full!");
             }
         }
         if(s == null)
         {
             throw new System.Exception("Shit why u gimme a null?");
         }
-        s.gameObject.layer = 8;
+
         GameObject dummy = Instantiate(StudentManager.accessibleStudentTemplate);
         dummy.transform.position = new Vector3(pos.x, pos.y, GlobalConstants.Z_TABLE_STATIC);
         dummies.Add(dummy);
@@ -161,7 +163,7 @@ public class Table : MonoBehaviour {
         s.gameObject.layer = 0;
         if(dummies.Count > 0)
         {
-            GameObject todestroy = dummies.First();
+            GameObject todestroy = dummies.Last();
             dummies.Remove(todestroy);
             Destroy(todestroy);
         }

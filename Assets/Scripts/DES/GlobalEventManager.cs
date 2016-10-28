@@ -43,6 +43,11 @@ public class GlobalEventManager : MonoBehaviour {
         tableMan.initialize(routeMan, this, studentMan);
         GlobalRegistry.initialize(routeMan.tables);
         addEvent(studentMan.getAnotherGroup());
+
+
+        UIManager.updateImportantMessage("Started with config: [SEED] " + GlobalConstants.RANDOM_SEED +
+                                                             " [TAKER] " + GlobalConstants.TABLE_TAKER_RATIO +
+                                                             " [SHARER] " + GlobalConstants.TABLE_SHARER_RATIO);
     }
 
     public void ChangeSpeed(int newSpeed)
@@ -61,6 +66,7 @@ public class GlobalEventManager : MonoBehaviour {
         isRunning = false;
         //Record result;
         GlobalRegistry.output();
+        UIManager.updateImportantMessage("System Stopped, Data Recorded");
     }
 	
 	void Update () {
@@ -82,8 +88,8 @@ public class GlobalEventManager : MonoBehaviour {
             currentTime = events.First().timeStamp;
             //Execute the first event - which may add another event
             Event toExecute = events.First();
-            //if(toExecute.type != Event.EventType.RoamToPoint)
-            //    Debug.Log("Event " + toExecute.ID + " " + toExecute.msg);
+            if(toExecute.type != Event.EventType.RoamToPoint)
+                UIManager.updateEventText("Event " + toExecute.ID + " " + toExecute.msg);
             this.addEvent(toExecute.execute());
             events.Remove(toExecute);
         }

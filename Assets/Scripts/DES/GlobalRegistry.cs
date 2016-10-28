@@ -47,16 +47,30 @@ public static class GlobalRegistry
         string config = "TAKER_" + GlobalConstants.TABLE_TAKER_RATIO.ToString("0.00") + "_SHARER_" + GlobalConstants.TABLE_SHARER_RATIO + "_";
         string path = Utility.Path + "/Output/";
         //Directory.CreateDirectory(Path.GetDirectoryName(path));
-        string pathStudent = path + "STUDE_DATA_" + config + System.Guid.NewGuid() + ".csv";
-        string pathTable = path + "TABLE_DATA_" + config + System.Guid.NewGuid() + ".csv";
+        System.Guid uniqueID = System.Guid.NewGuid();
+        string pathStudent = path + "STUDE_DATA_" + config + uniqueID + ".csv";
+        string pathTable = path + "TABLE_DATA_" + config + uniqueID + ".csv";
 
         //ID, System Time, Search Time
-        string[] studentStringData = studentData.Select(s => s.Key + "," + s.Value.systemTime + "," + s.Value.searchTime).ToArray();
-        File.WriteAllLines(pathStudent, studentStringData);
+        var studentStringData = studentData.Select(s => s.Key + "," + s.Value.systemTime + "," + s.Value.searchTime).ToList();
+        studentStringData.Insert(0, "ID,Time in System, Time in search");
+        File.WriteAllLines(pathStudent, studentStringData.ToArray());
 
-        string[] tableStringData = Enumerable.Range(0, time.Count - 1)
-            .Select(i => time.ElementAt(i) + "," + seatsUsed.ElementAt(i) + "," + seatsReserved.ElementAt(i)).ToArray();
-        File.WriteAllLines(pathTable, tableStringData);
+        List<string> tableStringData = Enumerable.Range(0, time.Count - 1)
+            .Select(i => {
+                if (i > 0)
+                {
+                    float timeInterval = time.ElementAt(i) - time.ElementAt(i - 1);
+                    int seatU = seatsUsed.ElementAt(i);
+                    int seatR = seatsReserved.ElementAt(i);
+
+                    float increU = seatU * timeInterval;
+                    float increR = seatR * timeInterval;
+                    return time.ElementAt(i) + ","+ seatU + "," + seatR + "," + timeInterval + "," + increU + "," + increR; 
+                }
+                else return "Time, Seats Used, Seats Taken, Delta_Time, Integral_Increment_Used, Integral_Increment_Reserved";
+            }).ToList();
+        File.WriteAllLines(pathTable, tableStringData.ToArray());
     }
     
     public static void signalStudent(Student s)

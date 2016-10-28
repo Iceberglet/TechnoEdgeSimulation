@@ -16,8 +16,6 @@ public class GlobalConstants
         TABLE_TAKER_RATIO = taker;
     }
 
-
-
     public static readonly float SIMULATION_TIME = 2 * 60 * 60;
   //Ratio of people willing to share a table
 

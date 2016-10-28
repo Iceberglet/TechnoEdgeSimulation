@@ -163,9 +163,11 @@ public class TableManager : MonoBehaviour
         }
         //Debug.Log("No available table, start roaming.");
         if (roamingStudents.Count > 200)
-            Debug.Log("********* WARNING: TOO MANY TABLELESS STUDENT(>200) *************");
+            UIManager.updateImportantMessage("***** WARNING: TOO MANY TABLELESS STUDENT: " + roamingStudents.Count + " Stopping at 300 ******");
         if (roamingStudents.Count > 300)
-            throw new Exception("********* Exception: TOO MANY TABLELESS STUDENT (>300) *************");
+        {
+            eventManager.Stop();
+        }
 
         s.isRoaming = true;
         roamingStudents.Add(s);
