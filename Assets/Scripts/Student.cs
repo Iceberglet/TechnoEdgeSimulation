@@ -7,6 +7,8 @@ public class Student : MonoBehaviour {
     //******************* For Recording Purposes *********************
     public float searchStart = -1f;
     public float searchEnd = -1f;
+    public float enterSystem = -1f;
+    public float leaveSystem = -1f;
 
 
 

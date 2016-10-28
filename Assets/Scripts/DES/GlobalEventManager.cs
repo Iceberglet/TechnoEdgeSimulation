@@ -51,7 +51,6 @@ public class GlobalEventManager : MonoBehaviour {
         {
             Application.LoadLevel(Application.loadedLevel);
             isRunning = true;
-            Debug.Log(newSpeed);
             reStart(newSpeed);
         }
         speedFactor = newSpeed;
@@ -60,11 +59,18 @@ public class GlobalEventManager : MonoBehaviour {
     public void Stop()
     {
         isRunning = false;
+        //Record result;
+        GlobalRegistry.output();
     }
 	
 	void Update () {
-        if (!isRunning || runningTime > GlobalConstants.SIMULATION_TIME)
+        if (!isRunning)
             return;
+        
+        if (runningTime > GlobalConstants.SIMULATION_TIME)
+        {
+            Stop();
+        }
 
         int speedForThisFrame = speedFactor;
         float elapsedTime = speedForThisFrame * Time.deltaTime;

@@ -68,7 +68,6 @@ public class UIManager : MonoBehaviour {
 
     private void onClickButton(int i)
     {
-        Debug.Log("Clicked Button: " + i);
         //************ Now action according to new speed **************
         switch (i)
         {

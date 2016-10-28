@@ -33,7 +33,20 @@ public class GlobalConstants
 
     //public static readonly bool allowTableSharing = true;
 
-
+    public static readonly IntervalGenerator[] STALL_SERVICE_INTERVALS = new IntervalGenerator[10]
+    {
+        //GenericDistribution.createInstanceFromFile("chinese.csv"),
+        new Uniform(15, 25),
+        new Uniform(15, 25),
+        new Uniform(15, 25),
+        new Uniform(15, 25),
+        new Uniform(15, 25),
+        new Uniform(15, 25),
+        new Uniform(15, 25),
+        new Uniform(15, 25),
+        new Uniform(15, 25),
+        new Uniform(15, 25)
+    };
 
     private static readonly float[] STALL_PROBA = new float[10]
     {

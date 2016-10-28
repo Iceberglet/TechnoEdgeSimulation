@@ -79,8 +79,6 @@
     <None Include="Assets\Data\layout_mainloop.txt" />
     <None Include="Assets\Data\layout_withTable - Test.txt" />
     <None Include="Assets\Data\layout_withTable.txt" />
-    <None Include="Assets\Output\1.txt" />
-    <None Include="Assets\Output\2.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

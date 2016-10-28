@@ -16,10 +16,13 @@ public class Table : MonoBehaviour {
 
     private void update(float time)
     {
-        utility[latestSeated] += latestSeated * (time - recordingSince);
-        disutility[latestReserved] += latestReserved * (time - recordingSince);
-        latestSeated = Math.Max(students.Count - dummies.Count, 0);
-        latestReserved = students.Count;
+        //utility[latestSeated] += latestSeated * (time - recordingSince);
+        //disutility[latestReserved] += latestReserved * (time - recordingSince);
+        int newSeated = dummies.Count;
+        int newReserved = Math.Max(students.Count - dummies.Count, 0);
+        GlobalRegistry.updateTableData(newSeated - latestSeated, newReserved - latestReserved);
+        latestReserved = newReserved;
+        latestSeated = newSeated;
         recordingSince = time;
     }
 
@@ -74,7 +77,6 @@ public class Table : MonoBehaviour {
             }
         }
         s.table = this;
-        GlobalRegistry.updateTableData(this);
         return updateStatus();
     }
 
@@ -84,7 +86,6 @@ public class Table : MonoBehaviour {
         int OriginalDummiesCount = dummies.Count;
         students.Remove(s);
         graphicRemove(s);
-        GlobalRegistry.updateTableData(this);
 
         int removedStudent = students.Count - OriginalStudentCount;
         int removedDummiesCount = dummies.Count - OriginalDummiesCount;

@@ -64,12 +64,12 @@ public class Stall : MonoBehaviour {
         this.ID = ID;
         this.name = GlobalConstants.STALL_IDS[ID];
         this.servers = GlobalConstants.STALL_SERVER[ID];
+        this.g = GlobalConstants.STALL_SERVICE_INTERVALS[ID];
         this.node = n;
     }
     
 	// Use this for initialization
 	void Start () {
-        g = new Uniform(15,25);
 	}
 	
 	// Update is called once per frame

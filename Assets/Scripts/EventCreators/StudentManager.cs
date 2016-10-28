@@ -41,6 +41,7 @@ public class StudentManager : MonoBehaviour {
             Student s = newStudent.GetComponent<Student>();
             students.Add(s);
             s.initialize(routeManagerScript.map_stalls[stall].GetComponent<Stall>(), groupScript, entry, eatingTimeGenerator.next());
+            s.enterSystem = GlobalEventManager.currentTime;
             //3. Add to group
             groupScript.students.Add(s);
             s.transform.parent = groupObj.transform;
@@ -59,6 +60,7 @@ public class StudentManager : MonoBehaviour {
     {
         if (s != null)
         {
+            s.leaveSystem = GlobalEventManager.currentTime;
             GlobalRegistry.signalStudent(s);
             StudentGroup group = s.group;
             //Remove from group
@@ -118,8 +120,8 @@ public class StudentManager : MonoBehaviour {
         tableManager = tableMan;
         routeManagerScript = routeManager.GetComponent<RouteManager>();
         globalEventManager = eventManager.GetComponent<GlobalEventManager>();
-        arrivalIntervalGenerator = new StudentEntry();
-        eatingTimeGenerator = new EatingTime();
+        arrivalIntervalGenerator = new Exp(0.4f);
+        eatingTimeGenerator = GenericDistribution.createInstanceFromFile("EatingTime.csv");
 	}
     
 	
