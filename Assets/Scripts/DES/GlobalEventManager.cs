@@ -63,6 +63,8 @@ public class GlobalEventManager : MonoBehaviour {
 
     public void Stop()
     {
+        if (!isRunning)
+            return;
         isRunning = false;
         //Record result;
         GlobalRegistry.output();

@@ -57,18 +57,19 @@ public static class GlobalRegistry
         File.WriteAllLines(pathStudent, studentStringData.ToArray());
 
         List<string> tableStringData = Enumerable.Range(0, time.Count - 1)
-            .Select(i => {
+            .Select(i =>
+            {
                 if (i > 0)
                 {
                     float timeInterval = time.ElementAt(i) - time.ElementAt(i - 1);
-                    int seatU = seatsUsed.ElementAt(i);
-                    int seatR = seatsReserved.ElementAt(i);
+                    int seatU = seatsUsed.ElementAt(i - 1);
+                    int seatR = seatsReserved.ElementAt(i - 1);
 
                     float increU = seatU * timeInterval;
                     float increR = seatR * timeInterval;
-                    return time.ElementAt(i) + ","+ seatU + "," + seatR + "," + timeInterval + "," + increU + "," + increR; 
+                    return time.ElementAt(i) + "," + seatU + "," + seatR + "," + timeInterval + "," + increU + "," + increR;
                 }
-                else return "Time, Seats Used, Seats Taken, Delta_Time, Integral_Increment_Used, Integral_Increment_Reserved";
+                else return "Time, Seats Used, Seats Taken, Delta_Time, Increment_Used, Increment_Reserved";
             }).ToList();
         File.WriteAllLines(pathTable, tableStringData.ToArray());
     }
