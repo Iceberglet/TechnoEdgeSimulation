@@ -4,12 +4,32 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Student : MonoBehaviour {
+    //******************* For Debugging Purposes *********************
+    public enum Stage
+    {
+        Eating,
+        GoingToQueue,
+        WaitingForTable,
+        WaitingForFriends,
+        Leaving
+    }
+    public Stage stage;
+    public int friends
+    {
+        get { return this.group.students.Count - 1; }
+    }
+
+    void OnMouseEnter()
+    {
+        UIManager.notifySelectStudent(this);
+    }
+
     //******************* For Recording Purposes *********************
     public float searchStart = -1f;
     public float searchEnd = -1f;
     public float enterSystem = -1f;
     public float leaveSystem = -1f;
-
+    public bool isDummy = false;
 
 
     //****************************************************************
@@ -76,6 +96,7 @@ public class Student : MonoBehaviour {
         currentPos = pos;
         route = r;
         t = (r != null && r.Count > 0) ? r.Last().coordinates : pos;
+        setPositionInUnity();
     }
 
     public float ETA(Coordinates target)

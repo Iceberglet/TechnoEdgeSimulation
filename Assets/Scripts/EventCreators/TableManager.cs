@@ -10,7 +10,7 @@ public class TableManager : MonoBehaviour
     private RouteManager routeManager;
     private StudentManager studentManager;
     private List<Table> tables = new List<Table>();
-    private List<Table> availableTables = new List<Table>();
+    public List<Table> availableTables = new List<Table>();
 
     private List<Node> mainLoopNodes;
     private List<Student> roamingStudents = new List<Student>();
@@ -21,18 +21,50 @@ public class TableManager : MonoBehaviour
         mainLoopNodes = r.mainLoopNodes;
         this.eventManager = eventManager;
         studentManager = s;
+        
         foreach(GameObject ss in r.map_stalls)
         {
             Stall sscript = ss.GetComponent<Stall>();
-            sscript.initializeTableManager(eventManager, this);
+            sscript.initializeTableManager(this);
         }
-
+        
         //Add all tables
         //Debug.Log("Tables: " + r.tables.Count);
+        Dictionary<Student, Table> st = new Dictionary<Student, Table>();
+        int seats = 0;
         foreach (Table t in r.tables)
         {
+            
             this.tables.Add(t);
+            //Fill this table with eating students
+            if (GlobalConstants.rand.NextDouble() < GlobalConstants.initialTablesTaken)
+            {
+                int numberOfStudentsAtTable = Math.Min(GlobalConstants.getStudentGroupSize(), t.size);
+                for (int x = 0; x < numberOfStudentsAtTable; x++)
+                {
+                    Student student = studentManager.getDummyStudent(-1, t.node);
+                    t.addStudent(student);
+                    t.graphicAdd(student);
+                    student.setPositionAndRoute(t.node.coordinates, null);
+                    student.gameObject.layer = 8;
+                    student.hasFood = true;
+                    st.Add(student, t);
+                }
+                seats += numberOfStudentsAtTable;
+                //Do not add to available ones
+                if (numberOfStudentsAtTable == t.size)
+                    continue;
+            }
             this.availableTables.Add(t);
+        }
+
+        GlobalRegistry.initialUsed = seats;
+
+        foreach (var kv in st)
+        {
+            Student ss = kv.Key;
+            Table tt = kv.Value;
+            eventManager.addEvent(new Event(ss.eatingTime, Event.EventType.TableDeparture, () => { return releaseStudent(ss, tt); }, "Finished Eating"));
         }
     }
 
@@ -105,6 +137,7 @@ public class TableManager : MonoBehaviour
     //Student READY to its entry point
     public Event releaseStudent(Student s, Table t)
     {
+        //Debug.Log(t.students.Count + " " + t.dummies.Count);
         s.finishedHisBusiness = true;
         if (s.group.students.All(student => student.finishedHisBusiness))
         {
@@ -112,7 +145,9 @@ public class TableManager : MonoBehaviour
             {
                 Student ars = x;
                 ars.setPathTo(findClosestExit(ars.currentPos), routeManager);    //Get the closest exit
+                                                                                 //Hard coded debug
                 t.removeStudent(ars);
+
                 float time = ars.ETA(null) + GlobalEventManager.currentTime;
                 eventManager.addEvent(new Event(time, Event.EventType.CanteenDeparture, () => studentManager.deleteStudent(ars),
                     "Time: " + time + " Student ID: " + ars.ID + " has left"));
@@ -127,6 +162,7 @@ public class TableManager : MonoBehaviour
     {
         s.searchStart = s.searchEnd = GlobalEventManager.currentTime;
         //This is a student whose friends have already got him a table
+
         if (s.table != null)
         {
             return boundStudentToTable(s, s.table);

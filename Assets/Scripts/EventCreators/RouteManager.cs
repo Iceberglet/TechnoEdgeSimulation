@@ -31,6 +31,8 @@ public class RouteManager : MonoBehaviour
     //******** Map Element **********
     //Use a graph of coordinates to represent the grid
     //Each edge should be used to represent a path
+    public StudentManager stMan;
+    public GlobalEventManager globalEventManager;
 
 
     //Initialize the map
@@ -44,7 +46,7 @@ public class RouteManager : MonoBehaviour
             }
         }
         tables = new List<Table>();
-        map_entries = new Node[4];
+        map_entries = new Node[3];
         map_stalls = new GameObject[10];
         Node[,] tempMap = new Node[24, 19];
         //Initialize Node Types
@@ -104,10 +106,11 @@ public class RouteManager : MonoBehaviour
                 //Special Nodes - Stalls
                 if (cur.nodeType == Node.NodeType.Stall)
                 {
+                    int stallIdx = i - 4;
                     GameObject g = Instantiate(stall);
                     Stall stallScript = g.GetComponent<Stall>();
-                    stallScript.initialize(i - 4, cur);
-                    map_stalls[i - 4] = g;
+                    map_stalls[stallIdx] = g;
+                    stallScript.initialize(stallIdx, cur, stMan, globalEventManager);
                     //arrivalIntervalGenerator.transform.parent = this.transform;
                     Vector3 v = new Vector3(i, j + 0.8f, GlobalConstants.Z_BOTTOM_STATIC);
                     g.transform.position = v;
@@ -146,9 +149,9 @@ public class RouteManager : MonoBehaviour
                     switch (i)
                     {
                         case 0: map_entries[0] = cur; break;
-                        case 3: map_entries[1] = cur; break;
-                        case 16: map_entries[2] = cur; break;
-                        case 23: map_entries[3] = cur; break;
+                        //case 3: map_entries[1] = cur; break; //Ignore McDonald now
+                        case 16: map_entries[1] = cur; break;
+                        case 23: map_entries[2] = cur; break;
                         default: throw new Exception("Invalid Entry Position? " + i + " " + j);
                     }
                 }

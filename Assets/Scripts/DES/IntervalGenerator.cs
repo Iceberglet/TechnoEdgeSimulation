@@ -82,37 +82,6 @@ public class Uniform : IntervalGenerator
     }
 }
 
-public class StudentEntry : IntervalGenerator
-{
-    int counter = 0;
-    private System.Random rand = new System.Random(GlobalConstants.RANDOM_SEED + 4);
-
-    public float next()
-    {
-        //TODO: Possibly get from a file
-        /*
-        if(counter >= 10)
-        {
-            return float.PositiveInfinity;
-        }
-        counter++;*/
-
-        return 2;
-    }
-}
-
-public class EatingTime : IntervalGenerator
-{
-    private System.Random rand = new System.Random(GlobalConstants.RANDOM_SEED + 5);
-
-    public float next()
-    {
-        //TODO: Possibly get from a file
-        return 500;
-    }
-}
-
-
 public class GenericDistribution : IntervalGenerator
 {
     private System.Random rand = new System.Random(GlobalConstants.RANDOM_SEED + 13);
@@ -147,7 +116,7 @@ public class GenericDistribution : IntervalGenerator
         for (int i = 0; i < rows.Length; i++)
         {
             String[] r = rows[i].Trim().Split(',');
-            if(r != null && r.Length == 2)
+            if (r != null && r.Length == 2)
             {
                 values.Add(float.Parse(r[0]));
                 probas.Add(float.Parse(r[1]));
@@ -155,7 +124,6 @@ public class GenericDistribution : IntervalGenerator
         }
         return new GenericDistribution(values.ToArray(), probas.ToArray());
     }
-
 
     public float next()
     {
@@ -166,7 +134,8 @@ public class GenericDistribution : IntervalGenerator
             idx++;
             toSample -= probabilities[idx];
         }
-        return idx == 0 ? 0 : value[idx - 1] + (float)rand.NextDouble()*(value[idx] - value[idx-1]);
+        //return value[idx];
+        return idx == 0 ? value[0] : value[idx - 1] + (float)rand.NextDouble()*(value[idx] - value[idx-1]);
     }
 }
 

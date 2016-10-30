@@ -21,24 +21,38 @@ public static class GlobalRegistry
     static List<int> seatsUsed;
     static List<int> seatsReserved;
 
-    public static void initialize(List<Table> ts)
+    public static int initialReserved = 0;
+    public static int initialUsed = 0;
+    public static int seated = 0;
+    public static int reserved = 0;
+
+    public static void initialize()
     {
         studentData = new Dictionary<long, StudentData>();
         time = new List<float>();
         seatsUsed = new List<int>();
         seatsReserved = new List<int>();
+    }
 
-        //TODO: adapt to initial conditions
+    public static void initializeData()
+    {
         time.Add(0);
-        seatsUsed.Add(0);
-        seatsReserved.Add(0);
+        seatsUsed.Add(initialUsed);
+        seatsReserved.Add(initialReserved);
+        //Debug.Log("Taken: " + initialUsed + " Reserved: " + initialReserved);
     }
 
     public static void updateTableData(int deltaUsed, int deltaReserved)
     {
+        if (GlobalEventManager.currentTime == 0f)
+        {
+            return;
+        }
         time.Add(GlobalEventManager.currentTime);
-        seatsReserved.Add(seatsReserved.Last() + deltaReserved);
-        seatsUsed.Add(seatsUsed.Last() + deltaUsed);
+        seated = seatsUsed.Last() + deltaUsed;
+        reserved = seatsReserved.Last() + deltaReserved;
+        seatsReserved.Add(reserved);
+        seatsUsed.Add(seated);
     }
 
     //Output Data upon termination
@@ -76,6 +90,8 @@ public static class GlobalRegistry
     
     public static void signalStudent(Student s)
     {
+        if (s.isDummy)
+            return;
         float searchTime = (s.searchEnd - s.searchStart);
         float systemTime = s.leaveSystem - s.enterSystem;
         if (searchTime > 0)

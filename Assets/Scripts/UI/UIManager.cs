@@ -131,7 +131,7 @@ public class UIManager : MonoBehaviour {
     public static void updateEventText(string s)
     {
         eventTexts.Insert(0, s);
-        if (eventTexts.Count > 10)
+        if (eventTexts.Count > 15)
             eventTexts.Remove(eventTexts.Last());
         eventText.text = string.Join("\n", eventTexts.ToArray());
     }
@@ -139,5 +139,10 @@ public class UIManager : MonoBehaviour {
     public static void updateImportantMessage(string s)
     {
         importantText.text = s;
+    }
+
+    public static void notifySelectStudent(Student s)
+    {
+        
     }
 }

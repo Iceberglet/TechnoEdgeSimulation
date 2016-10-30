@@ -14,6 +14,10 @@ public class Stall : MonoBehaviour {
     public new string name { get; private set; }
     public Node node { get; private set; }
     public List<Node> pathToMainLoop { get; private set; }
+    public int queueLength
+    {
+        get { return queue.Count; }
+    }
 
     //Add Student to Queue
     //Start Serving student and Remove student
@@ -24,8 +28,9 @@ public class Stall : MonoBehaviour {
         //We start serving if this is the only student!
         if (queue.Count <= servers)
         {
-            return new Event(GlobalEventManager.currentTime + g.next(), Event.EventType.StallDequeue, this.process,
+            Event e = new Event(GlobalEventManager.currentTime + g.next(), Event.EventType.StallDequeue, this.process,
                 "Time: " + GlobalEventManager.currentTime + " Stall " + this.ID + " Finished Serving Student " + s.ID);
+            globalEventManager.addEvent(e);
         }
         return null;
     }
@@ -52,13 +57,12 @@ public class Stall : MonoBehaviour {
         else return null;
     }
 
-    public void initializeTableManager(GlobalEventManager g, TableManager t)
+    public void initializeTableManager(TableManager t)
     {
-        this.globalEventManager = g;
         this.tableManager = t;
     }
 
-    public void initialize(int ID, Node n)
+    public void initialize(int ID, Node n, StudentManager st, GlobalEventManager g)
     {
         this.g = new Exp(20);
         this.ID = ID;
@@ -66,14 +70,22 @@ public class Stall : MonoBehaviour {
         this.servers = GlobalConstants.STALL_SERVER[ID];
         this.g = GlobalConstants.STALL_SERVICE_INTERVALS[ID];
         this.node = n;
+        this.globalEventManager = g;
+
+        int numberOfInitialStudent = GlobalConstants.initialStallQueues[ID];
+        
+        for (int i = 0; i < numberOfInitialStudent; i++)
+        {
+            Student s = st.getDummyStudent(ID, node);
+            Event e = addStudent(s);
+            //if(e != null)
+            //    Debug.Log("Next Dequeue: " + e.timeStamp + " " + e.type);
+            globalEventManager.addEvent(e);
+        }
     }
-    
-	// Use this for initialization
-	void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    void OnMouseOver()
+    {
+        UIManager.updateImportantMessage("Selected Stall: " + name + " with queue length: " + queue.Count);
+    }
 }

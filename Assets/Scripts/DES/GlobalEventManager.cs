@@ -17,7 +17,7 @@ public class GlobalEventManager : MonoBehaviour {
     //If needs to be done within 20 seconds at fastest speed 
     // -> 1 frame = 1 deltaTime
     // -> the simulated time elapsed should be (deltaTime * 2 * 3600 / 20 = 360 * deltaTime)
-    private static int speedFactor = 1;   //0, 1, 10, 100, 1000
+    private static int speedFactor = 0;   //0, 1, 10, 100, 1000
     private static bool isRunning = false;     //Should animation run?
 
     private static List<Event> events;
@@ -31,23 +31,28 @@ public class GlobalEventManager : MonoBehaviour {
 
     private void reStart(int speed = 1)
     {
+        StudentManager.NumberOfPeopleInSystem = 0;
         currentTime = 0;
         runningTime = 0;
         speedFactor = speed;
         events = new List<Event>();
+        GlobalConstants.loadInitialCondition();
+        GlobalRegistry.initialize();
         routeMan = routeManager.GetComponent<RouteManager>();
         studentMan = studentManager.GetComponent<StudentManager>();
         tableMan = tableManager.GetComponent<TableManager>();
         routeMan.initialize();
-        studentMan.initialize(tableMan);
+        studentMan.initialize();
         tableMan.initialize(routeMan, this, studentMan);
-        GlobalRegistry.initialize(routeMan.tables);
-        addEvent(studentMan.getAnotherGroup());
+        //Add students to stall queues as initialization
 
-
+        addEvent(studentMan.getAnotherGroup(0));
+        addEvent(studentMan.getAnotherGroup(1));
+        addEvent(studentMan.getAnotherGroup(2));
         UIManager.updateImportantMessage("Started with config: [SEED] " + GlobalConstants.RANDOM_SEED +
                                                              " [TAKER] " + GlobalConstants.TABLE_TAKER_RATIO +
                                                              " [SHARER] " + GlobalConstants.TABLE_SHARER_RATIO);
+        GlobalRegistry.initializeData();
     }
 
     public void ChangeSpeed(int newSpeed)
@@ -90,7 +95,7 @@ public class GlobalEventManager : MonoBehaviour {
             currentTime = events.First().timeStamp;
             //Execute the first event - which may add another event
             Event toExecute = events.First();
-            if(toExecute.type != Event.EventType.RoamToPoint)
+            if(toExecute.type == Event.EventType.StallDequeue)
                 UIManager.updateEventText("Event " + toExecute.ID + " " + toExecute.msg);
             this.addEvent(toExecute.execute());
             events.Remove(toExecute);
@@ -119,4 +124,18 @@ public class GlobalEventManager : MonoBehaviour {
         }
         events.Add(e);
     }
+
+
+    /*
+    public Event adjustStallProba()
+    {
+        int[] queueLengths = routeMan.map_stalls.Select(g => g.GetComponent<Stall>().queueLength).ToArray();
+        float[] currentCumuProba = GlobalConstants.STALL_PROBA;
+        float[] newProba = new float[currentCumuProba.Length];
+        float totalProba = 0;
+        for (int i = 0; i < currentCumuProba.Length; ++i)
+        {
+            newProba[i] = (currentCumuProba[i] - (i > 0 ? currentCumuProba[i - 1] : 0)) * Mathf.Exp(-queueLengths[i] / 10);
+        }
+    }*/
 }

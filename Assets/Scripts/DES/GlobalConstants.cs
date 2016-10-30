@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using UnityEngine;
 
 public class GlobalConstants
 {
     public static int RANDOM_SEED = 9;
-    public static float TABLE_TAKER_RATIO = 0.7f;
+    public static float TABLE_TAKER_RATIO = 0f;
     public static float TABLE_SHARER_RATIO = 0.5f;
 
     public static void updateConfig(int seed, float taker, float sharer)
@@ -33,36 +35,46 @@ public class GlobalConstants
 
     public static readonly IntervalGenerator[] STALL_SERVICE_INTERVALS = new IntervalGenerator[10]
     {
-        //GenericDistribution.createInstanceFromFile("chinese.csv"),
-        new Uniform(15, 25),
-        new Uniform(15, 25),
-        new Uniform(15, 25),
-        new Uniform(15, 25),
-        new Uniform(15, 25),
-        new Uniform(15, 25),
-        new Uniform(15, 25),
-        new Uniform(15, 25),
-        new Uniform(15, 25),
-        new Uniform(15, 25)
+        GenericDistribution.createInstanceFromFile("Indonesia.csv"),
+        GenericDistribution.createInstanceFromFile("India.csv"),
+        GenericDistribution.createInstanceFromFile("Minced meat noodle.csv"),
+        GenericDistribution.createInstanceFromFile("Vegetarian.csv"),
+        GenericDistribution.createInstanceFromFile("Yong Tau Foo.csv"),
+        GenericDistribution.createInstanceFromFile("Wok Soup.csv"),
+        GenericDistribution.createInstanceFromFile("Japanese.csv"),
+        GenericDistribution.createInstanceFromFile("Chicken Rice.csv"),
+        GenericDistribution.createInstanceFromFile("Western.csv"),
+        GenericDistribution.createInstanceFromFile("Mixed rice.csv")
     };
 
-    private static readonly float[] STALL_PROBA = new float[10]
+    public static float[] STALL_PROBA = new float[10]
     {
-        0.1f, 0.2f, 0.3f, 0.4f, 0.5f,
-        0.6f, 0.7f, 0.8f, 0.9f, 1f
+        0.144208038f,
+        0.236406619f,
+        0.319148936f,
+        0.38534279f,
+        0.460992908f,
+        0.498817967f,
+        0.572104019f,
+        0.718676123f,
+        0.841607565f,
+        1,
     };
     public static readonly int[] STALL_SERVER = new int[10]
     {
         1, 1, 1, 1, 1,
         1, 1, 1, 1, 1
     };
-    private static readonly float[] ENTRY_PROBA = new float[4]
+    private static readonly float[] ENTRY_PROBA = new float[3]
     {
-        0.25f, 0.36f, 0.96f, 1
+        0.18f, 0.27f, 1
     };
     private static readonly float[] GROUPSIZE_PROBA = new float[4]
     {
-        0.6f, 0.88f, 0.95f, 1f
+        0.6793f,
+        0.8586f,
+        0.9564f,
+        1
     };
     public static readonly string[] STALL_IDS = new string[10]
     {
@@ -70,7 +82,56 @@ public class GlobalConstants
         "WOK_", "JAP_", "CHIC", "WEST", "CHIN"
     };
 
-    public static Random rand = new Random(GlobalConstants.RANDOM_SEED);
+    public static System.Random rand = new System.Random(GlobalConstants.RANDOM_SEED);
+
+
+    public static float initialTablesTaken;
+    public static int[] initialStallQueues = new int[10];
+    public static IntervalGenerator initialEatingTimeGenerator;
+    public static void loadInitialCondition()
+    {
+        string path = Utility.Path + "/Input/initialConditionTablesAndStalls.txt";
+
+        String[] rows = File.ReadAllText(path).Split('\n');
+
+        for (int i = 0; i < rows.Length; i++)
+        {
+            String[] r = rows[i].Trim().Split(',');
+            if (i > 0)
+            {
+                initialStallQueues[i - 1] = int.Parse(r[0]);
+            } else
+            {
+                initialTablesTaken = float.Parse(r[0]);
+            }
+        }
+        initialEatingTimeGenerator = GenericDistribution.createInstanceFromFile("initialConditionEatingTime.csv");
+
+
+
+        path = Utility.Path + "/Input/StallPreferences.csv";
+        rows = File.ReadAllText(path).Split('\n');
+        float[] temp = new float[10];
+        float[] cumu = new float[10];
+        float sum = 0;
+
+        for (int i = 0; i < 10; i++)
+        {
+            String[] r = rows[i].Trim().Split(',');
+            temp[i] = float.Parse(r[0]);
+            sum += temp[i];
+            cumu[i] = sum;
+        }
+        STALL_PROBA = cumu.Select(number => number / sum).ToArray();
+    }
+    
+    public static string[] entryDistributionFileNames = new string[3]
+    {
+        "entrance3 ",
+        "entrance1 ",
+        "entrance2 "
+    };
+
 
     public static int getStudentGroupSize()
     {

@@ -13,7 +13,8 @@ public class UITimeText : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        t.text = "Current Time: " + parseTime(GlobalEventManager.runningTime);
+        t.text = "Current Time: " + parseTime(GlobalEventManager.runningTime) + " Population: " + StudentManager.NumberOfPeopleInSystem
+            + " Seated: " + GlobalRegistry.seated + " Reserved: " + GlobalRegistry.reserved;
 	}
 
     string parseTime(float t)

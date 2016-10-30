@@ -82,16 +82,17 @@ public class Table : MonoBehaviour {
 
     public Status removeStudent(Student s)
     {
+        //Debug.Log(students.First().ID + " " + s.ID);
         int OriginalStudentCount = students.Count;
         int OriginalDummiesCount = dummies.Count;
         students.Remove(s);
         graphicRemove(s);
 
-        int removedStudent = students.Count - OriginalStudentCount;
-        int removedDummiesCount = dummies.Count - OriginalDummiesCount;
+        int removedStudent = OriginalStudentCount - students.Count;
+        int removedDummiesCount = OriginalDummiesCount - dummies.Count;
         if(removedStudent != removedDummiesCount)
         {
-            throw new Exception(removedStudent + " " + removedDummiesCount);
+            throw new Exception(OriginalStudentCount + " " + OriginalDummiesCount + " " + removedStudent + " " + removedDummiesCount);
         }
 
         return updateStatus();
@@ -161,7 +162,7 @@ public class Table : MonoBehaviour {
     {
         //s.setPositionAndRoute(this.node.coordinates, null);
         s.gameObject.layer = 0;
-        if(dummies.Count > 0)
+        if (dummies.Count > 0)
         {
             GameObject todestroy = dummies.Last();
             dummies.Remove(todestroy);

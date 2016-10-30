@@ -13,7 +13,8 @@ public class Event
         TableDeparture,
         CanteenDeparture,
 
-        RoamToPoint
+        RoamToPoint,
+        UpdateStudentGenerator
     }
 
     private static long counter = 0;

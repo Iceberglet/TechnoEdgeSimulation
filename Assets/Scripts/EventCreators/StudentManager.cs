@@ -8,26 +8,26 @@ using UnityEngine;
 
 public class StudentManager : MonoBehaviour {
     //Dependency
-    public GameObject routeManager;
-    public GameObject eventManager;
-    private RouteManager routeManagerScript;
-    private GlobalEventManager globalEventManager;
-    private TableManager tableManager;
+    public RouteManager routeManagerScript;
+    public GlobalEventManager globalEventManager;
+    public TableManager tableManager;
 
     public GameObject studentTemplate;
     public static GameObject accessibleStudentTemplate;
     public GameObject studentGroupTemplate;
     private List<Student> students = new List<Student>();   //Needed for collective movement
-    private IntervalGenerator arrivalIntervalGenerator;
+    private IntervalGenerator[] arrivalIntervalGenerators = new IntervalGenerator[3];
     private IntervalGenerator eatingTimeGenerator;
     private System.Random rand;
 
+    public static int NumberOfPeopleInSystem = 0;
+
     //Add in terms of group, Delete in terms of individual
-    public StudentGroup addStudentGroup()
+    public StudentGroup addStudentGroup(int entryIdx)
     {
         GameObject groupObj = Instantiate(studentGroupTemplate);
         StudentGroup groupScript = groupObj.GetComponent<StudentGroup>();
-        Node entry = routeManagerScript.map_entries[GlobalConstants.getEntry()];
+        Node entry = routeManagerScript.map_entries[entryIdx];
         int number = GlobalConstants.getStudentGroupSize();
         //1. Determine Group Type.
         StudentGroup.Type type = rand.NextDouble() < GlobalConstants.TABLE_TAKER_RATIO ? StudentGroup.Type.TableFirst : StudentGroup.Type.FoodFirst;
@@ -40,14 +40,58 @@ public class StudentManager : MonoBehaviour {
             GameObject newStudent = Instantiate(studentTemplate);
             Student s = newStudent.GetComponent<Student>();
             students.Add(s);
-            s.initialize(routeManagerScript.map_stalls[stall].GetComponent<Stall>(), groupScript, entry, eatingTimeGenerator.next());
+            float eatingTime = eatingTimeGenerator.next();
+            if(eatingTime > 10)
+                Debug.Log(eatingTime);
+            s.initialize(routeManagerScript.map_stalls[stall].GetComponent<Stall>(), groupScript, entry, eatingTime);
             s.enterSystem = GlobalEventManager.currentTime;
             //3. Add to group
             groupScript.students.Add(s);
             s.transform.parent = groupObj.transform;
+            NumberOfPeopleInSystem++;
         }
         groupObj.transform.parent = this.transform;
         return groupScript;
+    }
+
+    public Student getDummyStudent(int stallIdx, Node start)
+    {
+        NumberOfPeopleInSystem++;
+        if (eatingTimeGenerator == null)
+        {
+            eatingTimeGenerator = GenericDistribution.createInstanceFromFile("eating time.csv");
+        }
+        GameObject newStudent = Instantiate(studentTemplate);
+        Student student = newStudent.GetComponent<Student>();
+        StudentGroup group = Instantiate(studentGroupTemplate).GetComponent<StudentGroup>();
+        group.students.Add(student);
+        student.transform.parent = group.transform;
+
+        if(stallIdx > -1)
+        {
+            Stall stall = routeManagerScript.map_stalls[stallIdx].GetComponent<Stall>();
+            student.initialize(stall, group, stall.node, eatingTimeGenerator.next());
+            //Get him a table if he is a taker
+            if (GlobalConstants.rand.NextDouble() < GlobalConstants.TABLE_TAKER_RATIO)
+            {
+                var tables = tableManager.availableTables.Where(t => t.students.Count == 0).ToList();
+                if(tables.Count > 0)
+                {
+                    Table table = tables.ElementAt(GlobalConstants.rand.Next(0, tables.Count));
+                    table.addStudent(student);
+                    student.table = table;
+                    GlobalRegistry.initialReserved++;
+                }
+            }
+        } else
+        {
+            student.initialize(null, group, start, GlobalConstants.initialEatingTimeGenerator.next());
+        }
+        student.enterSystem = GlobalEventManager.currentTime;
+        student.isDummy = true;
+        student.setPositionAndRoute(start.coordinates, null);
+        students.Add(student);
+        return student;
     }
 
     public void advanceAllStudents(float seconds)
@@ -58,6 +102,7 @@ public class StudentManager : MonoBehaviour {
 
     public Event deleteStudent(Student s)
     {
+        NumberOfPeopleInSystem--;
         if (s != null)
         {
             s.leaveSystem = GlobalEventManager.currentTime;
@@ -77,17 +122,15 @@ public class StudentManager : MonoBehaviour {
 
     //Create a new StudentGroup, register its next event
     //Register a next StudentGroup creationEvent
-    public Event getAnotherGroup()
+    public Event getAnotherGroup(int entryIdx)
     {
         //add entry event
-        float time = GlobalEventManager.currentTime + (float)(arrivalIntervalGenerator.next());
+        float time = GlobalEventManager.currentTime + (float)(arrivalIntervalGenerators[entryIdx].next());
         //Debug.Log("Time: " + GlobalEventManager.currentTime + " Next Group Scheduled at: " + time);
-        Event e = new Event(time, Event.EventType.CanteenArrival, this.getAnotherGroup,
+        Event e = new Event(time, Event.EventType.CanteenArrival, ()=>this.getAnotherGroup(entryIdx),
              "Time: " + GlobalEventManager.currentTime + " Student Group Arrival");
-
-        //Currently, for testing purpose only. This group has ENTERED NOW
-        //TODO: Make student go loop
-        StudentGroup group = addStudentGroup();
+        
+        StudentGroup group = addStudentGroup(entryIdx);
         if (group.type == StudentGroup.Type.FoodFirst)
         {
             foreach (Student s in group.students)
@@ -110,23 +153,27 @@ public class StudentManager : MonoBehaviour {
     }
 
     // Use this for initialization
-    public void initialize(TableManager tableMan)
+    public void initialize()
     {
         rand = new System.Random(GlobalConstants.RANDOM_SEED);
         accessibleStudentTemplate = Instantiate(studentTemplate);
         accessibleStudentTemplate.GetComponent<SpriteRenderer>().color = Color.white;
         accessibleStudentTemplate.transform.position = new Vector3(99, 99, -99);
+        eatingTimeGenerator = GenericDistribution.createInstanceFromFile("eating time.csv");
 
-        tableManager = tableMan;
-        routeManagerScript = routeManager.GetComponent<RouteManager>();
-        globalEventManager = eventManager.GetComponent<GlobalEventManager>();
-        arrivalIntervalGenerator = new Exp(0.4f);
-        eatingTimeGenerator = GenericDistribution.createInstanceFromFile("EatingTime.csv");
-	}
-    
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+        //Initialize Arrival Generator and add events to change them
+        updateGenerators("1200-1230.csv");
+        globalEventManager.addEvent(new Event(60 * 30, Event.EventType.UpdateStudentGenerator, () => updateGenerators("1230-1300.csv"), "Updated Entry Interval"));
+        globalEventManager.addEvent(new Event(60 * 60, Event.EventType.UpdateStudentGenerator, () => updateGenerators("1330-1400.csv"), "Updated Entry Interval"));
+    }
+
+    private Event updateGenerators(string timeAppendon)
+    {
+        for(int i = 0; i < GlobalConstants.entryDistributionFileNames.Length; ++i)
+        {
+            //Must be in input
+            arrivalIntervalGenerators[i] = GenericDistribution.createInstanceFromFile(GlobalConstants.entryDistributionFileNames[i] + timeAppendon);
+        }
+        return null;
+    }
 }

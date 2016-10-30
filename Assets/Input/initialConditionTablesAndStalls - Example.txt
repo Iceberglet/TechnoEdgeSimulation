@@ -1,0 +1,13 @@
+0.7	#Ratio of tables being taken
+12	#Start: Initial Queues, from left to right, start with Indonesia Queue length
+3
+4
+5
+9
+4
+5
+12
+32
+10	#End: initial queues. Last one is Mixed Rice Queue length
+
+#IMPORTANT: In actual file DO NOT write anything else, and delete EVERYTHING after the # (They are exclusively comments for this example so you can understand the format!!!!)
