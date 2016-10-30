@@ -103,6 +103,10 @@ public class Student : MonoBehaviour {
     {
         if (target == null)
             target = t;
+        if(route.Count > 0)
+        {
+            return (route.Count - 1 + Coordinates.distGrid(route.First().coordinates, currentPos)) / GlobalConstants.WALK_SPEED;
+        }
         return Coordinates.distGrid(currentPos, target) / GlobalConstants.WALK_SPEED;
     }
 

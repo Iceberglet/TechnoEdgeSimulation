@@ -53,6 +53,7 @@ public class GlobalEventManager : MonoBehaviour {
                                                              " [TAKER] " + GlobalConstants.TABLE_TAKER_RATIO +
                                                              " [SHARER] " + GlobalConstants.TABLE_SHARER_RATIO);
         GlobalRegistry.initializeData();
+        addEvent(adjustStallProba());
     }
 
     public void ChangeSpeed(int newSpeed)
@@ -126,16 +127,25 @@ public class GlobalEventManager : MonoBehaviour {
     }
 
 
-    /*
+    int favourableFactor = 10;  //The higher the value, the less students are driven off by long queues
+    int updateInterval = 20;
+
     public Event adjustStallProba()
     {
+
         int[] queueLengths = routeMan.map_stalls.Select(g => g.GetComponent<Stall>().queueLength).ToArray();
         float[] currentCumuProba = GlobalConstants.STALL_PROBA;
         float[] newProba = new float[currentCumuProba.Length];
         float totalProba = 0;
         for (int i = 0; i < currentCumuProba.Length; ++i)
         {
-            newProba[i] = (currentCumuProba[i] - (i > 0 ? currentCumuProba[i - 1] : 0)) * Mathf.Exp(-queueLengths[i] / 10);
+            float newMarginalProba = (currentCumuProba[i] - (i > 0 ? currentCumuProba[i - 1] : 0)) * Mathf.Exp(-queueLengths[i] / favourableFactor);
+            totalProba += newMarginalProba;
+            newProba[i] = totalProba;
         }
-    }*/
+        newProba.ToList().ForEach(p => p /= totalProba);
+        GlobalConstants.STALL_PROBA = newProba;
+
+        return new Event(GlobalEventManager.currentTime + updateInterval, Event.EventType.UpdateStudentGenerator, adjustStallProba, "Adjusting Probabilities");
+    }
 }
