@@ -7,23 +7,20 @@ using System;
 public class Table : MonoBehaviour {
 
     //********************* For Data Collection Purposes ***********
-    private float recordingSince;
     private int latestSeated;
     private int latestReserved;
-
-    public float[] utility; //utility[i] is the time spent with i people ACTUALLY SITTING THERE
-    public float[] disutility;  //disutility[i] is the time spent with i people RESERVED A PLACE HERE
-
+    
     private void update(float time)
     {
         //utility[latestSeated] += latestSeated * (time - recordingSince);
         //disutility[latestReserved] += latestReserved * (time - recordingSince);
         int newSeated = dummies.Count;
         int newReserved = Math.Max(students.Count - dummies.Count, 0);
+        if (newSeated + newReserved > this.size)
+            Debug.Log("LOOOOOOOOOOOOOOOOOOOL");
         GlobalRegistry.updateTableData(newSeated - latestSeated, newReserved - latestReserved);
         latestReserved = newReserved;
         latestSeated = newSeated;
-        recordingSince = time;
     }
 
     //2 or 4
@@ -38,27 +35,18 @@ public class Table : MonoBehaviour {
 
     public static float offset = 0.2f; //Used for graphics
 
-    public void initialize(int s, List<Node> corners, List<Student> initialStudents = null)
+    public void initialize(int s, List<Node> corners)
     {
         this.size = s;
         this.corners = corners;
         this.node = corners.First();    //upper right
-        recordingSince = 0;
         latestReserved = 0;
         latestSeated = 0;
-        if (initialStudents != null)
-        {
-            latestSeated = initialStudents.Count;
-            foreach (Student x in initialStudents)
-                addStudent(x);
-        }
-        utility = new float[size + 1];
-        disutility = new float[size + 1];
     }
 
     public Status addStudent(Student s)
     {
-        if (!students.Contains(s))
+        if (s.table == null && !students.Contains(s))
         {
             if (this.students.Count < this.size)
             {
@@ -75,8 +63,8 @@ public class Table : MonoBehaviour {
                 errorMsg += "\nAttempted to add Student: " + s.ID;
                 throw new System.Exception(errorMsg);
             }
+            s.table = this;
         }
-        s.table = this;
         return updateStatus();
     }
 
@@ -92,7 +80,7 @@ public class Table : MonoBehaviour {
         int removedDummiesCount = OriginalDummiesCount - dummies.Count;
         if(removedStudent != removedDummiesCount)
         {
-            throw new Exception(OriginalStudentCount + " " + OriginalDummiesCount + " " + removedStudent + " " + removedDummiesCount);
+            Debug.Log("Error: " + OriginalStudentCount + " " + OriginalDummiesCount + " " + removedStudent + " " + removedDummiesCount);
         }
 
         return updateStatus();
@@ -119,8 +107,17 @@ public class Table : MonoBehaviour {
         return status;
     }
 
+    //Called by outsiders to add a student dummy to table
+    //Student must already belong to table
     public void graphicAdd(Student s)
     {
+        if (!students.Contains(s))
+            return;
+        if (s.dummy != null)
+        {
+            return;
+        }
+
         Coordinates topRight = this.node.coordinates;
         Coordinates pos = new Coordinates(-10, -10);    //For this student
 
@@ -134,7 +131,7 @@ public class Table : MonoBehaviour {
                 case 2: pos = new Coordinates(topRight.x - offset, topRight.y - 1 + offset); break;
                 case 3: pos = new Coordinates(topRight.x - 1 + offset, topRight.y - 1 + offset); break;
                 case 4: pos = new Coordinates(topRight.x - 1 + offset, topRight.y - offset); break;
-                default: break; // throw new System.Exception("Invalid operation. Table is full!");
+                default: return; // throw new System.Exception("Invalid operation. Table is full! Dummy: " + dummies.Count + " Student: " + students.Count );
             }
         }
         if (this.size == 2)
@@ -143,7 +140,7 @@ public class Table : MonoBehaviour {
             {
                 case 1: pos = new Coordinates(topRight.x - 0.5f, topRight.y - offset); break;
                 case 2: pos = new Coordinates(topRight.x - 0.5f, topRight.y - 1 + offset); break;
-                default: break; // throw new System.Exception("Invalid operation. Table is full!");
+                default: return; // throw new System.Exception("Invalid operation. Table is full! Dummy: " + dummies.Count + " Student: " + students.Count);
             }
         }
         if(s == null)
@@ -153,8 +150,11 @@ public class Table : MonoBehaviour {
 
         GameObject dummy = Instantiate(StudentManager.accessibleStudentTemplate);
         dummy.transform.position = new Vector3(pos.x, pos.y, GlobalConstants.Z_TABLE_STATIC);
-        dummies.Add(dummy);
         dummy.transform.parent = this.transform;
+
+        dummies.Add(dummy);
+        s.dummy = dummy;
+
         update(GlobalEventManager.currentTime);
     }
 
@@ -162,12 +162,17 @@ public class Table : MonoBehaviour {
     {
         //s.setPositionAndRoute(this.node.coordinates, null);
         s.gameObject.layer = 0;
-        if (dummies.Count > 0)
+        GameObject todestroy = null;
+
+        if (s.dummy != null && this.dummies.Contains(s.dummy))
         {
-            GameObject todestroy = dummies.Last();
-            dummies.Remove(todestroy);
-            Destroy(todestroy);
+            todestroy = s.dummy;
         }
+        //else throw new Exception("Cannot find dummy: Student.dummy: " +s.dummy + " contains this dummy? " + this.dummies.Contains(s.dummy));
+
+        dummies.Remove(todestroy);
+        Destroy(todestroy);
+        
         update(GlobalEventManager.currentTime);
     }
 

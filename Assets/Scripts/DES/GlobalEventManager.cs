@@ -127,14 +127,13 @@ public class GlobalEventManager : MonoBehaviour {
     }
 
 
-    int favourableFactor = 10;  //The higher the value, the less students are driven off by long queues
+    int favourableFactor = 25;  //The higher the value, the less students are driven off by long queues
     int updateInterval = 20;
 
     public Event adjustStallProba()
     {
-
         int[] queueLengths = routeMan.map_stalls.Select(g => g.GetComponent<Stall>().queueLength).ToArray();
-        float[] currentCumuProba = GlobalConstants.STALL_PROBA;
+        float[] currentCumuProba = GlobalConstants.STALL_PROBA_ORIGINAL;
         float[] newProba = new float[currentCumuProba.Length];
         float totalProba = 0;
         for (int i = 0; i < currentCumuProba.Length; ++i)
@@ -143,9 +142,10 @@ public class GlobalEventManager : MonoBehaviour {
             totalProba += newMarginalProba;
             newProba[i] = totalProba;
         }
-        newProba.ToList().ForEach(p => p /= totalProba);
-        GlobalConstants.STALL_PROBA = newProba;
+        newProba = newProba.ToList().Select(p=>p/totalProba).ToArray();
+        //Debug.Log("A: " + string.Join(" ", newProba.ToList().Select(p => p.ToString("F2")).ToArray()));
 
+        GlobalConstants.STALL_PROBA = newProba;
         return new Event(GlobalEventManager.currentTime + updateInterval, Event.EventType.UpdateStudentGenerator, adjustStallProba, "Adjusting Probabilities");
     }
 }

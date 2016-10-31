@@ -5,23 +5,47 @@ using System.Collections.Generic;
 
 public class Student : MonoBehaviour {
     //******************* For Debugging Purposes *********************
-    public enum Stage
+    public GameObject dummy
     {
-        Eating,
-        GoingToQueue,
-        WaitingForTable,
-        WaitingForFriends,
-        Leaving
-    }
-    public Stage stage;
-    public int friends
-    {
-        get { return this.group.students.Count - 1; }
+        get { return Dummy; }
+        set {
+            if (Dummy == null)
+                Dummy = value;
+            else
+            {
+                if(Dummy != value)
+                    throw new System.Exception("You must not set the dummy value more than once! ");
+            }
+        }
     }
 
-    void OnMouseEnter()
+    private GameObject Dummy;
+
+    public Table table
     {
-        UIManager.notifySelectStudent(this);
+        get { return Table; }
+        set
+        {
+            if (Table == null)
+                Table = value;
+            else
+            {
+                if (Table != value)
+                    throw new System.Exception("You must not set the table value more than once! ");
+            }
+        }
+    }
+    private Table Table = null;
+
+
+
+
+    public void changeColor()
+    {
+        if(dummy != null)
+        {
+            dummy.GetComponent<SpriteRenderer>().color = Color.yellow;
+        }
     }
 
     //******************* For Recording Purposes *********************
@@ -50,7 +74,6 @@ public class Student : MonoBehaviour {
 
     public bool isRoaming = false;  //Used by TableManager to decide whether to continue roaming or exit when roamingDoneEvent happens
     public bool hasFood = false;    //Used to decide whether student stays to eat
-    public Table table = null;
     public bool finishedHisBusiness = false;
 
     public void advanceFor(float seconds)
@@ -103,7 +126,7 @@ public class Student : MonoBehaviour {
     {
         if (target == null)
             target = t;
-        if(route.Count > 0)
+        if(route != null && route.Count > 0)
         {
             return (route.Count - 1 + Coordinates.distGrid(route.First().coordinates, currentPos)) / GlobalConstants.WALK_SPEED;
         }

@@ -41,8 +41,6 @@ public class StudentManager : MonoBehaviour {
             Student s = newStudent.GetComponent<Student>();
             students.Add(s);
             float eatingTime = eatingTimeGenerator.next();
-            if(eatingTime > 10)
-                Debug.Log(eatingTime);
             s.initialize(routeManagerScript.map_stalls[stall].GetComponent<Stall>(), groupScript, entry, eatingTime);
             s.enterSystem = GlobalEventManager.currentTime;
             //3. Add to group
@@ -79,7 +77,6 @@ public class StudentManager : MonoBehaviour {
                 {
                     Table table = tables.ElementAt(GlobalConstants.rand.Next(0, tables.Count));
                     table.addStudent(student);
-                    student.table = table;
                     GlobalRegistry.initialReserved++;
                 }
             }

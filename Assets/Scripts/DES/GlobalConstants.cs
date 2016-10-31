@@ -8,7 +8,7 @@ using UnityEngine;
 public class GlobalConstants
 {
     public static int RANDOM_SEED = 9;
-    public static float TABLE_TAKER_RATIO = 0f;
+    public static float TABLE_TAKER_RATIO = 0.7f;
     public static float TABLE_SHARER_RATIO = 0.5f;
 
     public static void updateConfig(int seed, float taker, float sharer)
@@ -47,19 +47,6 @@ public class GlobalConstants
         GenericDistribution.createInstanceFromFile("Mixed rice.csv")
     };
 
-    public static float[] STALL_PROBA = new float[10]
-    {
-        0.144208038f,
-        0.236406619f,
-        0.319148936f,
-        0.38534279f,
-        0.460992908f,
-        0.498817967f,
-        0.572104019f,
-        0.718676123f,
-        0.841607565f,
-        1,
-    };
     public static readonly int[] STALL_SERVER = new int[10]
     {
         1, 1, 1, 1, 1,
@@ -84,6 +71,9 @@ public class GlobalConstants
 
     public static System.Random rand = new System.Random(GlobalConstants.RANDOM_SEED);
 
+    public static float[] STALL_PROBA_ORIGINAL;
+
+    public static float[] STALL_PROBA;
 
     public static float initialTablesTaken;
     public static int[] initialStallQueues = new int[10];
@@ -122,7 +112,8 @@ public class GlobalConstants
             sum += temp[i];
             cumu[i] = sum;
         }
-        STALL_PROBA = cumu.Select(number => number / sum).ToArray();
+        STALL_PROBA_ORIGINAL = cumu.Select(number => number / sum).ToArray();
+        STALL_PROBA = STALL_PROBA_ORIGINAL;
     }
     
     public static string[] entryDistributionFileNames = new string[3]
@@ -148,10 +139,10 @@ public class GlobalConstants
 
     private static int getIdx(float[] cumu)
     {
-        float p = (float)rand.NextDouble();
+        double p = rand.NextDouble();
         for(int i = 0; i < cumu.Length; ++i)
         {
-            if (p <= cumu[i])
+            if (p < cumu[i])
                 return i;
         }
         return cumu.Length - 1;

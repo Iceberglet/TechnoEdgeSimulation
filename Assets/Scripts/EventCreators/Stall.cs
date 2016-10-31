@@ -84,8 +84,28 @@ public class Stall : MonoBehaviour {
         }
     }
 
-    void OnMouseOver()
+
+    void Update()
     {
-        UIManager.updateImportantMessage("Selected Stall: " + name + " with queue length: " + queue.Count);
+        float degreeOfDanger = Mathf.Min(queue.Count / 60.0f, 1);
+        queueText.text = queue.Count.ToString();
+        queueText.color = Utility.HSVToRGB((1 - degreeOfDanger) * 0.4f, 0.9f, 0.9f);
+        //queueText.color = Color.Lerp(Color.green, Color.red, degreeOfDanger);
+    }
+
+    private TextMesh queueText
+    {
+        get { return this.gameObject.GetComponentInChildren<TextMesh>(); }
+    }
+
+    void OnMouseEnter()
+    {
+        //UIManager.updateImportantMessage("Selected Stall: " + name + " with queue length: " + queue.Count);
+        queueText.fontSize = 250;
+    }
+    void OnMouseExit()
+    {
+        //UIManager.updateImportantMessage("Selected Stall: " + name + " with queue length: " + queue.Count);
+        queueText.fontSize = 100;
     }
 }

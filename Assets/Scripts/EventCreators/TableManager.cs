@@ -89,6 +89,7 @@ public class TableManager : MonoBehaviour
                     eventManager.addEvent(boundStudentToTable(x1, t));
                     roamingStudents.Remove(x1);
                     x1.searchEnd = GlobalEventManager.currentTime;
+                    //Debug.Log("Student is gone, he waited table for: " + (x1.searchEnd - x1.searchStart));
                 }
                 return;
             } 
@@ -126,7 +127,7 @@ public class TableManager : MonoBehaviour
         } else
         {
             //Send to stall
-            s.table = t;
+            //t.addStudent(s);
             s.setPathTo(s.stallOfChoice.node, routeManager);
             float time = s.ETA(null) + GlobalEventManager.currentTime;
             return new Event(time, Event.EventType.StallEnqueue, () => s.stallOfChoice.addStudent(s),
@@ -139,6 +140,7 @@ public class TableManager : MonoBehaviour
     {
         //Debug.Log(t.students.Count + " " + t.dummies.Count);
         s.finishedHisBusiness = true;
+        s.changeColor();
         if (s.group.students.All(student => student.finishedHisBusiness))
         {
             foreach (Student x in s.group.students)
@@ -146,6 +148,19 @@ public class TableManager : MonoBehaviour
                 Student ars = x;
                 ars.setPathTo(findClosestExit(ars.currentPos), routeManager);    //Get the closest exit
                                                                                  //Hard coded debug
+                /*
+                if (!t.dummies.Contains(ars.dummy))
+                {
+                    Debug.Log("**** ERROR: THIS TABLE DOES NOT HAVE YOUR DUMMY LEH ****");
+                    Debug.Log("Your Dummy: " + ars.dummy);
+                    Debug.Log("Table Got students: " + t.students.Count);
+                    Debug.Log("You in this table? : " + t.students.Contains(ars));
+                    Debug.Log("Table Got dummies: " + t.dummies.Count);
+                    Debug.Log("All dummies have their owners, and not you: " + t.dummies.All(d =>
+                    {
+                        return t.students.Any(ss => ss != ars && ss.dummy == d);
+                    }));
+                }*/
                 t.removeStudent(ars);
 
                 float time = ars.ETA(null) + GlobalEventManager.currentTime;
@@ -160,7 +175,11 @@ public class TableManager : MonoBehaviour
     //Add in a student who is BEGINNING to search for a Table
     public Event addTableSearchingStudent(Student s)
     {
-        s.searchStart = s.searchEnd = GlobalEventManager.currentTime;
+        if (s == null)
+        {
+            Debug.Log("Error: Student is Null");
+            return null;
+        }
         //This is a student whose friends have already got him a table
 
         if (s.table != null)
@@ -169,13 +188,15 @@ public class TableManager : MonoBehaviour
         }
 
         //Check if any of his friends have a table already
+        /*
         List<Student> friendsWithTable = s.group.students.Where(xx => xx.table != null).ToList();
         if (friendsWithTable.Count > 0)
         {
             return boundStudentToTable(s, friendsWithTable.First().table);
-        }
+        }*/
 
         //Check if there are available tables FIRST!
+        s.searchStart = s.searchEnd = GlobalEventManager.currentTime;
         if (availableTables.Count > 0)
         {
             //Select one that has enough seats OR EMPTY! 
@@ -189,7 +210,6 @@ public class TableManager : MonoBehaviour
 
                 foreach (Student studentInGroup in s.group.students)
                 {
-                    studentInGroup.table = target;
                     target.addStudent(studentInGroup);
                     //Student s2 = studentInGroup;
                     //eventManager.addEvent(boundStudentToTable(s2, target));
@@ -215,6 +235,10 @@ public class TableManager : MonoBehaviour
         //If we need to continue roaming
         if (s.isRoaming)
         {
+            //If roamed too long, change to sharer LOL
+            if (!s.group.isSharer && GlobalEventManager.currentTime - s.searchStart > 180)
+                s.group.isSharer = true;
+
             //Get to the next roamingNode
             Node target = mainLoopNodes.OrderBy(n => Coordinates.distGrid(s.currentPos, n.coordinates)).ElementAt(GlobalConstants.rand.Next(1,6));
             s.setPathTo(target, routeManager);

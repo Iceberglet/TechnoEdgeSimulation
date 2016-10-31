@@ -112,7 +112,7 @@ public class RouteManager : MonoBehaviour
                     map_stalls[stallIdx] = g;
                     stallScript.initialize(stallIdx, cur, stMan, globalEventManager);
                     //arrivalIntervalGenerator.transform.parent = this.transform;
-                    Vector3 v = new Vector3(i, j + 0.8f, GlobalConstants.Z_BOTTOM_STATIC);
+                    Vector3 v = new Vector3(i, j + 0.2f, GlobalConstants.Z_BOTTOM_STATIC);
                     g.transform.position = v;
                 }
                 //Tables
@@ -126,7 +126,7 @@ public class RouteManager : MonoBehaviour
                         corners.Add(tempMap[i - 1, j - 1]);
                         corners.Add(tempMap[i - 1, j]);
                         Table t = addElement(ElementType.Table, i - 0.5f, j - 0.5f).GetComponent<Table>();
-                        t.initialize(4, corners, null);
+                        t.initialize(4, corners);
                         tables.Add(t);
                     }
                     else if (table[i, j] == 3)
@@ -137,7 +137,7 @@ public class RouteManager : MonoBehaviour
                         corners.Add(tempMap[i - 1, j - 1]);
                         corners.Add(tempMap[i - 1, j]);
                         Table t = addElement(ElementType.HalfTable, i - 0.5f, j - 0.5f).GetComponent<Table>();
-                        t.initialize(2, corners, null);
+                        t.initialize(2, corners);
                         tables.Add(t);
                     }
                 }

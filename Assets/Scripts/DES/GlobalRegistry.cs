@@ -66,7 +66,10 @@ public static class GlobalRegistry
         string pathTable = path + "TABLE_DATA_" + config + uniqueID + ".csv";
 
         //ID, System Time, Search Time
-        var studentStringData = studentData.Select(s => s.Key + "," + s.Value.systemTime + "," + s.Value.searchTime).ToList();
+        
+        var studentStringData = studentData.Select(s => {
+            return s.Key + "," + s.Value.systemTime + "," + s.Value.searchTime;
+        }).ToList();
         studentStringData.Insert(0, "ID,Time in System, Time in search");
         File.WriteAllLines(pathStudent, studentStringData.ToArray());
 
@@ -96,9 +99,10 @@ public static class GlobalRegistry
         float systemTime = s.leaveSystem - s.enterSystem;
         if (searchTime > 0)
         {
-            Debug.Log("Student: " + s.ID + " has searched for " + searchTime);
+            //Debug.Log("Student: " + s.ID + " has searched for " + searchTime);
         }
-        studentData.Add(s.ID, new StudentData(searchTime, systemTime));
+        if(!studentData.ContainsKey(s.ID) || searchTime > 0)
+            studentData[s.ID] = new StudentData(searchTime, systemTime);
     }
 }
 
